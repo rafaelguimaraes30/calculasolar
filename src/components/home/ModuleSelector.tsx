@@ -23,29 +23,27 @@ export function ModuleSelector({
   const current = getModuleById(moduloId);
   const fabricantes = useMemo(() => getManufacturers(), []);
   const fabricante = current?.fabricante ?? fabricantes[0];
-  const potencias = useMemo(
-    () => getPowersByManufacturer(fabricante),
-    [fabricante],
-  );
+  // Evita memoização manual que pode impedir otimizações do React Compiler.
+  const potencias = getPowersByManufacturer(fabricante);
 
   const handleFabricante = (novoFabricante: string) => {
     const powers = getPowersByManufacturer(novoFabricante);
     const targetPower = current?.potenciaW ?? powers[0];
     const closest =
       powers.find((p) => p === targetPower) ?? powers[powers.length - 1];
-    const module = getModulesDataProvider().findByManufacturerAndPower(
+    const modulo = getModulesDataProvider().findByManufacturerAndPower(
       novoFabricante,
       closest,
     );
-    if (module) onModuleChange(module.id);
+    if (modulo) onModuleChange(modulo.id);
   };
 
   const handlePotencia = (potenciaW: number) => {
-    const module = getModulesDataProvider().findByManufacturerAndPower(
+    const modulo = getModulesDataProvider().findByManufacturerAndPower(
       fabricante,
       potenciaW,
     );
-    if (module) onModuleChange(module.id);
+    if (modulo) onModuleChange(modulo.id);
   };
 
   return (

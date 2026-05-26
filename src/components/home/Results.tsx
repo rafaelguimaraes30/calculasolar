@@ -220,9 +220,6 @@ export function Results({
                 <span className="text-sm text-white/80">
                   Telhado: <strong className="text-white">{result.orientacaoLabel}</strong>
                 </span>
-                <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/60">
-                  {Math.round(result.fatorOrientacao * 100)}% eficiência
-                </span>
               </div>
             </div>
             <p

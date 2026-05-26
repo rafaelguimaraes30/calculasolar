@@ -11,6 +11,8 @@ export type RoofOrientation =
   | "noroeste"
   | "leste"
   | "oeste"
+  | "sudeste"
+  | "sudoeste"
   | "sul";
 
 export interface SimulationInput {
@@ -35,7 +37,6 @@ export interface SimulationResult {
   paybackAnos: number;
   geracaoMensalPorMes: number[];
   geracaoMensalDetalhada: MonthlyGenerationPoint[];
-  fatorOrientacao: number;
   orientacaoLabel: string;
   hsp: number;
   hspLookup: HspLookupResult;

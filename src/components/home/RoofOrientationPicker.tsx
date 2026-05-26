@@ -5,7 +5,7 @@ import {
   type OrientacaoTelhadoOption,
 } from "@/lib/solar/orientation";
 import type { RoofOrientation } from "@/types/solar";
-import { Compass, Home, Info } from "lucide-react";
+import { Compass, Home } from "lucide-react";
 
 interface RoofOrientationPickerProps {
   value: RoofOrientation;
@@ -42,7 +42,9 @@ const GRID_SLOTS: Record<RoofOrientation, string> = {
   nordeste: "col-start-3 row-start-1",
   oeste: "col-start-1 row-start-2",
   leste: "col-start-3 row-start-2",
+  sudoeste: "col-start-1 row-start-3",
   sul: "col-start-2 row-start-3",
+  sudeste: "col-start-3 row-start-3",
 };
 
 function OrientationButton({
@@ -70,20 +72,10 @@ function OrientationButton({
           : "border-navy-800/10 bg-white hover:border-solar-500/40 hover:bg-solar-500/5"
       }`}
     >
-      {option.destaque === "melhor" && !selected && (
-        <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-solar-500 px-2 py-0.5 text-[10px] font-bold text-navy-900">
-          Recomendado
-        </span>
-      )}
       <span
         className={`text-xs font-bold sm:text-sm ${selected ? "text-navy-900" : "text-navy-800"}`}
       >
         {option.label}
-      </span>
-      <span
-        className={`mt-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold sm:text-xs ${styles.badge}`}
-      >
-        {option.eficienciaLabel}
       </span>
     </button>
   );
@@ -94,8 +86,6 @@ export function RoofOrientationPicker({
   onChange,
   error,
 }: RoofOrientationPickerProps) {
-  const selected = ORIENTACOES_TELHADO.find((o) => o.id === value);
-
   return (
     <div className="sm:col-span-2">
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -135,15 +125,9 @@ export function RoofOrientationPicker({
           ))}
         </div>
 
-        {selected && (
-          <div className="mt-4 flex gap-2 rounded-xl bg-solar-500/8 px-3 py-2.5 text-sm text-navy-800/80">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-solar-600" />
-            <p>
-              <strong className="font-semibold text-navy-900">{selected.label}:</strong>{" "}
-              {selected.dica}
-            </p>
-          </div>
-        )}
+        <p className="mt-4 text-xs text-navy-700/70">
+          A orientação do telhado influencia a geração de energia solar.
+        </p>
       </div>
 
       {error && (

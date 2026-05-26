@@ -64,7 +64,6 @@ export function calculateSolarSimulation(
     paybackAnos: financeiro.paybackSimplesAnos,
     geracaoMensalPorMes: [...geracaoMensalPorMes],
     geracaoMensalDetalhada,
-    fatorOrientacao,
     orientacaoLabel: getOrientacaoLabel(orientacaoTelhado),
     hsp,
     hspLookup,
