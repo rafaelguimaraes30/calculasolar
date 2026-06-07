@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      {
+        source: "/energia-solar-em-:slug",
+        destination: "/energia-solar-em/:slug",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

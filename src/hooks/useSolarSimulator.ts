@@ -3,73 +3,143 @@
 import { calculateSolarSimulation } from "@/lib/solar/calculate";
 import { LOADING_DURATION_MS } from "@/lib/solar/constants";
 import { DEFAULT_MODULE_ID } from "@/lib/solar/modulesData";
-import { lookupHsp, type HspLookupResult } from "@/lib/solar/solarData";
-import { lookupTariff, type TariffLookupResult } from "@/lib/solar/tariffData";
+import { lookupGHI } from "@/lib/solar/ghiData";
+import { lookupTariff } from "@/lib/solar/tariffData";
 import { hasFormErrors, validateSimulationForm } from "@/lib/solar/validate";
 import type {
   PropertyType,
   SimulationFormData,
   SimulationFormErrors,
+  SimulationInput,
   SimulationResult,
   RoofOrientation,
+  RoofTiltChoice,
 } from "@/types/solar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const initialForm: SimulationFormData = {
+export interface SolarSimulatorInitialValues {
+  cidade?: string;
+  estado?: string;
+  consumo?: string;
+}
+
+const defaultForm: SimulationFormData = {
   cidade: "",
   estado: "SP",
   consumo: "",
   tipo: "residencial",
   orientacao: "norte",
+  inclinacao: "nao_sei",
   moduloId: DEFAULT_MODULE_ID,
 };
 
-export function useSolarSimulator() {
-  const [form, setForm] = useState<SimulationFormData>(initialForm);
+function buildSimulationInput(form: SimulationFormData): SimulationInput | null {
+  const consumo = Number(form.consumo);
+  if (!Number.isFinite(consumo) || !form.cidade.trim()) return null;
+
+  return {
+    cidade: form.cidade.trim(),
+    estado: form.estado,
+    consumoMensalKwh: consumo,
+    tipoImovel: form.tipo as PropertyType,
+    orientacaoTelhado: form.orientacao,
+    moduloId: form.moduloId,
+    inclinacaoEscolha: form.inclinacao,
+  };
+}
+
+export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
+  const [form, setForm] = useState<SimulationFormData>({
+    ...defaultForm,
+    cidade: initial?.cidade ?? defaultForm.cidade,
+    estado: initial?.estado ?? defaultForm.estado,
+    consumo: initial?.consumo ?? defaultForm.consumo,
+  });
   const [errors, setErrors] = useState<SimulationFormErrors>({});
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [hasSimulated, setHasSimulated] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
-  const [hspPreview, setHspPreview] = useState<HspLookupResult | null>(null);
-  const [hspPreviewLoading, setHspPreviewLoading] = useState(false);
+  const [ghiPreview, setGhiPreview] = useState<ReturnType<typeof lookupGHI> | null>(null);
+  const [ghiPreviewLoading, setGhiPreviewLoading] = useState(false);
   const tariffPreview = useMemo(
     () => lookupTariff(form.estado),
     [form.estado],
   );
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hspDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastSimulatedOrientacaoRef = useRef<RoofOrientation | null>(null);
+  const ghiDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSimulatedParamsRef = useRef<{
+    orientacao: RoofOrientation;
+    inclinacao: RoofTiltChoice;
+  } | null>(null);
 
   useEffect(() => {
-    if (hspDebounceRef.current) clearTimeout(hspDebounceRef.current);
+    if (ghiDebounceRef.current) clearTimeout(ghiDebounceRef.current);
 
     const cidade = form.cidade.trim();
     if (cidade.length < 2) {
       setTimeout(() => {
-        setHspPreview(null);
-        setHspPreviewLoading(false);
+        setGhiPreview(null);
+        setGhiPreviewLoading(false);
       }, 0);
       return;
     }
 
-    setHspPreviewLoading(true);
-    hspDebounceRef.current = setTimeout(() => {
-      setHspPreview(lookupHsp(cidade, form.estado));
-      setHspPreviewLoading(false);
-    }, 320);
+    const loadingTimer = setTimeout(() => setGhiPreviewLoading(true), 0);
+    ghiDebounceRef.current = setTimeout(() => {
+      setGhiPreview(lookupGHI(cidade, form.estado));
+      setGhiPreviewLoading(false);
+    }, 280);
 
     return () => {
-      if (hspDebounceRef.current) clearTimeout(hspDebounceRef.current);
+      clearTimeout(loadingTimer);
+      if (ghiDebounceRef.current) clearTimeout(ghiDebounceRef.current);
     };
   }, [form.cidade, form.estado]);
+
+  const recalculateIfSimulated = useCallback(
+    (formData: SimulationFormData) => {
+      if (!hasSimulated || loading) return;
+
+      const last = lastSimulatedParamsRef.current;
+      if (
+        last &&
+        last.orientacao === formData.orientacao &&
+        last.inclinacao === formData.inclinacao
+      ) {
+        return;
+      }
+
+      const input = buildSimulationInput(formData);
+      if (!input) return;
+
+      const simulation = calculateSolarSimulation(input);
+
+      setGhiPreview(simulation.ghiLookup);
+      setResult(simulation);
+      setAnimationKey((k) => k + 1);
+      lastSimulatedParamsRef.current = {
+        orientacao: formData.orientacao,
+        inclinacao: formData.inclinacao,
+      };
+    },
+    [hasSimulated, loading],
+  );
 
   const updateField = useCallback(
     <K extends keyof SimulationFormData>(
       field: K,
       value: SimulationFormData[K],
     ) => {
-      setForm((prev) => ({ ...prev, [field]: value }));
+      setForm((prev) => {
+        const next = { ...prev, [field]: value };
+
+        if (field === "orientacao" || field === "inclinacao") {
+          recalculateIfSimulated(next);
+        }
+
+        return next;
+      });
       setErrors((prev) => {
         if (!prev[field]) return prev;
         const next = { ...prev };
@@ -77,14 +147,14 @@ export function useSolarSimulator() {
         return next;
       });
     },
-    [],
+    [recalculateIfSimulated],
   );
 
   const selectCity = useCallback(
     (cidade: string, estado: string) => {
       setForm((prev) => ({ ...prev, cidade, estado }));
-      setHspPreview(lookupHsp(cidade, estado));
-      setHspPreviewLoading(false);
+      setGhiPreview(lookupGHI(cidade, estado));
+      setGhiPreviewLoading(false);
       setErrors((prev) => {
         if (!prev.cidade) return prev;
         const next = { ...prev };
@@ -94,11 +164,6 @@ export function useSolarSimulator() {
     },
     [],
   );
-
-  const resolveHspPreview = useCallback((lookup: HspLookupResult) => {
-    setHspPreview(lookup);
-    setHspPreviewLoading(false);
-  }, []);
 
   const submit = useCallback(() => {
     const validationErrors = validateSimulationForm(form);
@@ -115,18 +180,20 @@ export function useSolarSimulator() {
     setLoading(true);
 
     timeoutRef.current = setTimeout(() => {
-      const simulation = calculateSolarSimulation({
-        cidade: form.cidade.trim(),
-        estado: form.estado,
-        consumoMensalKwh: Number(form.consumo),
-        tipoImovel: form.tipo as PropertyType,
-        orientacaoTelhado: form.orientacao,
-        moduloId: form.moduloId,
-      });
+      const input = buildSimulationInput(form);
+      if (!input) {
+        setLoading(false);
+        return;
+      }
 
-      setHspPreview(simulation.hspLookup);
+      const simulation = calculateSolarSimulation(input);
+
+      setGhiPreview(simulation.ghiLookup);
       setResult(simulation);
-      lastSimulatedOrientacaoRef.current = form.orientacao;
+      lastSimulatedParamsRef.current = {
+        orientacao: form.orientacao,
+        inclinacao: form.inclinacao,
+      };
       setHasSimulated(true);
       setAnimationKey((k) => k + 1);
       setLoading(false);
@@ -140,36 +207,6 @@ export function useSolarSimulator() {
 
     return true;
   }, [form]);
-
-  // Recalcula automaticamente quando o usuário altera apenas a orientação do telhado.
-  // (Mantém consistência com os resultados sem exibir fatores numéricos na UI.)
-  useEffect(() => {
-    if (!hasSimulated) return;
-    if (loading) return;
-    if (lastSimulatedOrientacaoRef.current === form.orientacao) return;
-
-    const consumo = Number(form.consumo);
-    if (!Number.isFinite(consumo)) return;
-    if (!form.cidade.trim()) return;
-
-    const simulation = calculateSolarSimulation({
-      cidade: form.cidade.trim(),
-      estado: form.estado,
-      consumoMensalKwh: consumo,
-      tipoImovel: form.tipo as PropertyType,
-      orientacaoTelhado: form.orientacao,
-      moduloId: form.moduloId,
-    });
-
-    setHspPreview(simulation.hspLookup);
-    setResult(simulation);
-    setAnimationKey((k) => k + 1);
-    lastSimulatedOrientacaoRef.current = form.orientacao;
-  }, [
-    form.orientacao,
-    hasSimulated,
-    loading,
-  ]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -186,12 +223,11 @@ export function useSolarSimulator() {
     loading,
     hasSimulated,
     animationKey,
-    hspPreview,
-    hspPreviewLoading,
+    ghiPreview,
+    ghiPreviewLoading,
     tariffPreview,
     updateField,
     selectCity,
-    resolveHspPreview,
     handleSubmit,
   };
 }

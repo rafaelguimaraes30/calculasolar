@@ -6,12 +6,13 @@ import { ESTADOS_BR } from "@/lib/solar/constants";
 import { Building2, Home, Loader2, Zap } from "lucide-react";
 import { CityAutocomplete } from "./CityAutocomplete";
 import { HspEducation } from "./HspEducation";
-import { HspPreviewBadge } from "./HspPreviewBadge";
+import { GhiPreviewBadge } from "./GhiPreviewBadge";
 import { TariffPreviewBadge } from "./TariffPreviewBadge";
 import { ModuleSelector } from "./ModuleSelector";
 import { FinancialEducation } from "./FinancialEducation";
 import { ModulesEducation } from "./ModulesEducation";
 import { RoofOrientationPicker } from "./RoofOrientationPicker";
+import { RoofTiltSelector } from "./RoofTiltSelector";
 
 interface SimulatorProps {
   simulator: UseSolarSimulatorReturn;
@@ -22,12 +23,11 @@ export function Simulator({ simulator }: SimulatorProps) {
     form,
     errors,
     loading,
-    hspPreview,
-    hspPreviewLoading,
+    ghiPreview,
+    ghiPreviewLoading,
     tariffPreview,
     updateField,
     selectCity,
-    resolveHspPreview,
     handleSubmit,
   } = simulator;
 
@@ -77,16 +77,15 @@ export function Simulator({ simulator }: SimulatorProps) {
                     id="cidade"
                     label="Cidade"
                     error={errors.cidade}
-                    hint="Comece a digitar — sugestões com HSP da região"
+                    hint="Comece a digitar — busca em todos os municípios do Brasil"
                   >
                     <CityAutocomplete
                       cidade={form.cidade}
                       estado={form.estado}
                       onCidadeChange={(value) => updateField("cidade", value)}
                       onSelectCity={(record) =>
-                        selectCity(record.cidade, record.estado)
+                        selectCity(record.nome, record.uf)
                       }
-                      onHspResolved={resolveHspPreview}
                       error={errors.cidade}
                     />
                   </FormField>
@@ -112,8 +111,8 @@ export function Simulator({ simulator }: SimulatorProps) {
 
                 <div className="sm:col-span-2 space-y-3">
                   <TariffPreviewBadge lookup={tariffPreview} />
-                  {(hspPreview || hspPreviewLoading) && (
-                    <HspPreviewBadge lookup={hspPreview} loading={hspPreviewLoading} />
+                  {(ghiPreview || ghiPreviewLoading) && (
+                    <GhiPreviewBadge lookup={ghiPreview} loading={ghiPreviewLoading} />
                   )}
                 </div>
 
@@ -148,6 +147,12 @@ export function Simulator({ simulator }: SimulatorProps) {
                   value={form.orientacao}
                   onChange={(orientacao) => updateField("orientacao", orientacao)}
                   error={errors.orientacao}
+                />
+
+                <RoofTiltSelector
+                  value={form.inclinacao}
+                  onChange={(inclinacao) => updateField("inclinacao", inclinacao)}
+                  error={errors.inclinacao}
                 />
 
                 <ModuleSelector
@@ -201,8 +206,8 @@ export function Simulator({ simulator }: SimulatorProps) {
                 {loading ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
-                    {hspPreview
-                      ? `Calculando com HSP ${hspPreview.hsp.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} h/dia...`
+                    {ghiPreview
+                      ? `Calculando com GHI ${ghiPreview.ghi.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} kWh/m²/dia...`
                       : "Calculando dimensionamento..."}
                   </>
                 ) : (

@@ -1,3 +1,5 @@
+import { defaultSiteMetadata } from "@/lib/seo/metadata";
+import { SITE_URL } from "@/lib/seo/site";
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
@@ -9,16 +11,8 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "CalculaSolar — Simule painéis solares para sua casa ou negócio",
-  description:
-    "Descubra quantos painéis solares você precisa. Simule gratuitamente a geração de energia solar com dados reais de irradiação do Brasil.",
-  keywords: [
-    "energia solar",
-    "painéis solares",
-    "simulador solar",
-    "economia de energia",
-    "fotovoltaico",
-  ],
+  metadataBase: new URL(SITE_URL),
+  ...defaultSiteMetadata(),
 };
 
 export default function RootLayout({

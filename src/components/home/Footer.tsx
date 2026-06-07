@@ -9,7 +9,7 @@ const footerLinks = {
   ],
   Empresa: [
     { label: "Sobre nós", href: "#" },
-    { label: "Blog", href: "#" },
+    { label: "Blog", href: "/blog" },
     { label: "Contato", href: "#" },
   ],
   Legal: [

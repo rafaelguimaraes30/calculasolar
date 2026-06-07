@@ -1,7 +1,8 @@
 import type { SimulationFormData, SimulationFormErrors } from "@/types/solar";
 import { CONSUMO_MAX_KWH, CONSUMO_MIN_KWH, ESTADOS_BR } from "./constants";
 import { getModuleById } from "./modulesData";
-import { ORIENTACAO_FATORES } from "./orientation";
+import { isValidRoofTiltChoice } from "./inclinacao";
+import { isValidOrientacao } from "./orientation";
 
 export function validateSimulationForm(
   data: SimulationFormData,
@@ -43,8 +44,14 @@ export function validateSimulationForm(
 
   if (!data.orientacao) {
     errors.orientacao = "Selecione para onde os painéis ficarão voltados.";
-  } else if (!(data.orientacao in ORIENTACAO_FATORES)) {
+  } else if (!isValidOrientacao(data.orientacao)) {
     errors.orientacao = "Orientação do telhado inválida.";
+  }
+
+  if (!data.inclinacao) {
+    errors.inclinacao = "Selecione a inclinação aproximada do telhado.";
+  } else if (!isValidRoofTiltChoice(data.inclinacao)) {
+    errors.inclinacao = "Inclinação do telhado inválida.";
   }
 
   if (!data.moduloId) {

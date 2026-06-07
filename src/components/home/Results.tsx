@@ -8,6 +8,8 @@ import {
   formatPaybackYears,
   capitalizeWords,
 } from "@/lib/solar/format";
+import { AdSlot } from "@/components/ads/AdSlot";
+import { CalculationParamsCard } from "./CalculationParamsCard";
 import { FinancialResultsCard } from "./FinancialResultsCard";
 import { GenerationSeasonChart } from "./GenerationSeasonChart";
 import { getHspSourceLabel } from "@/lib/solar/solarData";
@@ -30,7 +32,7 @@ interface ResultsProps {
   loading: boolean;
   hasSimulated: boolean;
   animationKey: number;
-  loadingHspLabel?: string | null;
+  loadingGhiLabel?: string | null;
 }
 
 function MetricCard({
@@ -110,7 +112,7 @@ export function Results({
   loading,
   hasSimulated,
   animationKey,
-  loadingHspLabel,
+  loadingGhiLabel,
 }: ResultsProps) {
   const tipoLabel =
     result?.input.tipoImovel === "comercial" ? "comércio" : "residência";
@@ -182,7 +184,7 @@ export function Results({
           <p className="mt-4 text-lg text-white/60">{subtitle}</p>
         </div>
 
-        {loading && <LoadingOverlay hspHint={loadingHspLabel} />}
+        {loading && <LoadingOverlay hspHint={loadingGhiLabel} />}
 
         {!loading && !hasSimulated && (
           <div className="mt-14">
@@ -250,11 +252,15 @@ export function Results({
               ))}
             </div>
 
-            <FinancialResultsCard result={result} />
+            <CalculationParamsCard result={result} />
+
+            <AdSlot position="after-results" className="mt-8 h-24 sm:h-28" />
+
+            <FinancialResultsCard result={result} delayBaseMs={520} />
 
             <div
               className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-white/5 opacity-0 animate-fade-up backdrop-blur-sm"
-              style={{ animationDelay: "560ms", animationFillMode: "forwards" }}
+              style={{ animationDelay: "600ms", animationFillMode: "forwards" }}
             >
               <div className="flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
                 <div className="flex items-center gap-4">

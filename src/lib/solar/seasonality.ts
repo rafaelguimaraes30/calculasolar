@@ -3,7 +3,9 @@
  * Substituível via `setSeasonalityDataProvider()` por dados meteorológicos reais.
  */
 
+import type { RoofOrientation } from "@/types/solar";
 import { MESES_LABEL } from "./constants";
+import { getEffectiveHSP } from "./transposition";
 
 /** Fatores mensais de irradiação relativa (jan–dez) */
 export const FATORES_SAZONALIDADE = [
@@ -102,4 +104,44 @@ export function distributeMonthlyGenerationKwh(
   return distributeMonthlyGeneration(geracaoMediaMensalKwh).map(
     (p) => p.geracaoKwh,
   );
+}
+
+/**
+ * Distribui geração mensal a partir de GHI mensal real (jan–dez).
+ * Preparado para alimentar gráficos com dados de irradiação por mês.
+ */
+export function distributeMonthlyGenerationFromGhi(
+  potenciaInstaladaKwp: number,
+  ghiMensal: readonly number[],
+  latitude: number,
+  tilt: number,
+  orientation: RoofOrientation,
+  performanceRatio: number,
+): MonthlyGenerationPoint[] {
+  const mediaGhi =
+    ghiMensal.reduce((acc, v) => acc + v, 0) / ghiMensal.length;
+
+  const pontos = ghiMensal.map((ghiMes, mesIndex) => {
+    const hspEfetivoMes = getEffectiveHSP(ghiMes, latitude, tilt, orientation);
+    const geracaoKwh =
+      potenciaInstaladaKwp * 30 * hspEfetivoMes * performanceRatio;
+
+    return {
+      mesIndex,
+      mesLabel: MESES_LABEL[mesIndex] ?? `M${mesIndex + 1}`,
+      fatorSazonal: mediaGhi > 0 ? ghiMes / mediaGhi : 1,
+      geracaoKwh,
+      isPico: false,
+      isVale: false,
+    };
+  });
+
+  const maxKwh = Math.max(...pontos.map((p) => p.geracaoKwh));
+  const minKwh = Math.min(...pontos.map((p) => p.geracaoKwh));
+
+  return pontos.map((p) => ({
+    ...p,
+    isPico: p.geracaoKwh === maxKwh,
+    isVale: p.geracaoKwh === minKwh,
+  }));
 }

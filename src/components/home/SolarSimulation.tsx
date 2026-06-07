@@ -1,11 +1,18 @@
 "use client";
 
-import { useSolarSimulator } from "@/hooks/useSolarSimulator";
+import {
+  useSolarSimulator,
+  type SolarSimulatorInitialValues,
+} from "@/hooks/useSolarSimulator";
 import { Results } from "./Results";
 import { Simulator } from "./Simulator";
 
-export function SolarSimulation() {
-  const simulator = useSolarSimulator();
+interface SolarSimulationProps {
+  initial?: SolarSimulatorInitialValues;
+}
+
+export function SolarSimulation({ initial }: SolarSimulationProps) {
+  const simulator = useSolarSimulator(initial);
 
   return (
     <>
@@ -15,9 +22,9 @@ export function SolarSimulation() {
         loading={simulator.loading}
         hasSimulated={simulator.hasSimulated}
         animationKey={simulator.animationKey}
-        loadingHspLabel={
-          simulator.hspPreview
-            ? `HSP ${simulator.hspPreview.hsp.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} h/dia · ${simulator.hspPreview.mensagem}`
+        loadingGhiLabel={
+          simulator.ghiPreview
+            ? `GHI ${simulator.ghiPreview.ghi.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} kWh/m²/dia · ${simulator.ghiPreview.mensagem}`
             : null
         }
       />

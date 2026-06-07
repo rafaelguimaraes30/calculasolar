@@ -1,12 +1,11 @@
 "use client";
 
 import { fieldClassName } from "@/components/ui/FormField";
+import { lookupGHI } from "@/lib/solar/ghiData";
 import {
-  getCitiesByState,
-  lookupHsp,
-  searchCities,
-  type SolarCityRecord,
-} from "@/lib/solar/solarData";
+  searchMunicipios,
+  type MunicipioSearchResult,
+} from "@/lib/solar/municipiosData";
 import { Loader2, MapPin } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
@@ -14,9 +13,8 @@ interface CityAutocompleteProps {
   cidade: string;
   estado: string;
   onCidadeChange: (value: string) => void;
-  onSelectCity: (record: SolarCityRecord) => void;
+  onSelectCity: (record: MunicipioSearchResult) => void;
   error?: string;
-  onHspResolved?: (lookup: ReturnType<typeof lookupHsp>) => void;
 }
 
 export function CityAutocomplete({
@@ -25,41 +23,37 @@ export function CityAutocomplete({
   onCidadeChange,
   onSelectCity,
   error,
-  onHspResolved,
 }: CityAutocompleteProps) {
   const listId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(0);
-  const [suggestions, setSuggestions] = useState<SolarCityRecord[]>([]);
+  const [suggestions, setSuggestions] = useState<MunicipioSearchResult[]>([]);
   const [searching, setSearching] = useState(false);
 
   const refreshSuggestions = useCallback(
     (query: string) => {
       setSearching(true);
-      const results = searchCities(query, estado, 8);
+      const results = searchMunicipios(query, estado, 10);
       setSuggestions(results);
       setHighlightIndex(0);
       setSearching(false);
-      setOpen(results.length > 0 && query.trim().length > 0);
+      setOpen(results.length > 0 && query.trim().length >= 2);
     },
     [estado],
   );
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (cidade.trim().length >= 1) {
+      if (cidade.trim().length >= 2) {
         refreshSuggestions(cidade);
       } else {
-        setSuggestions(getCitiesByState(estado));
+        setSuggestions([]);
         setOpen(false);
       }
-      if (cidade.trim().length >= 2 && onHspResolved) {
-        onHspResolved(lookupHsp(cidade, estado));
-      }
-    }, 280);
+    }, 200);
     return () => clearTimeout(timer);
-  }, [cidade, estado, refreshSuggestions, onHspResolved]);
+  }, [cidade, estado, refreshSuggestions]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -71,12 +65,9 @@ export function CityAutocomplete({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  function selectRecord(record: SolarCityRecord) {
+  function selectRecord(record: MunicipioSearchResult) {
     onSelectCity(record);
-    onCidadeChange(record.cidade);
-    if (onHspResolved) {
-      onHspResolved(lookupHsp(record.cidade, record.estado));
-    }
+    onCidadeChange(record.nome);
     setOpen(false);
   }
 
@@ -98,6 +89,14 @@ export function CityAutocomplete({
     }
   }
 
+  function ghiPreview(record: MunicipioSearchResult): string {
+    const lookup = lookupGHI(record.nome, record.uf);
+    return lookup.ghi.toLocaleString("pt-BR", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
+  }
+
   return (
     <div
       ref={containerRef}
@@ -116,11 +115,10 @@ export function CityAutocomplete({
           value={cidade}
           onChange={(e) => {
             onCidadeChange(e.target.value);
-            setOpen(true);
+            if (e.target.value.trim().length >= 2) setOpen(true);
           }}
           onFocus={() => {
-            if (cidade.trim() || suggestions.length) setOpen(true);
-            if (!cidade.trim()) setSuggestions(getCitiesByState(estado));
+            if (cidade.trim().length >= 2 && suggestions.length) setOpen(true);
           }}
           onKeyDown={handleKeyDown}
           aria-invalid={!!error}
@@ -139,10 +137,14 @@ export function CityAutocomplete({
         <ul
           id={listId}
           role="listbox"
-          className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-xl border border-navy-800/10 bg-white py-1 shadow-xl shadow-navy-900/10 animate-fade-in"
+          className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-navy-800/10 bg-white py-1 shadow-xl shadow-navy-900/10 animate-fade-in"
         >
           {suggestions.map((record, index) => (
-            <li key={`${record.cidade}-${record.estado}`} role="option" aria-selected={index === highlightIndex}>
+            <li
+              key={`${record.codigo_ibge}-${record.uf}`}
+              role="option"
+              aria-selected={index === highlightIndex}
+            >
               <button
                 type="button"
                 className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
@@ -153,9 +155,9 @@ export function CityAutocomplete({
                 onMouseEnter={() => setHighlightIndex(index)}
                 onClick={() => selectRecord(record)}
               >
-                <span className="font-medium">{record.cidade}</span>
+                <span className="font-medium">{record.label}</span>
                 <span className="shrink-0 text-xs text-navy-700/50">
-                  HSP {record.hsp.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} h/dia
+                  GHI {ghiPreview(record)} kWh/m²/dia
                 </span>
               </button>
             </li>
