@@ -13,7 +13,7 @@ export const metadata = buildPageMetadata({
   description:
     "Artigos sobre energia solar, geração de painéis fotovoltaicos e potencial solar por cidade no Brasil.",
   path: "/blog",
-  keywords: ["blog energia solar", "painéis solares", "fotovoltaico", "GHI"],
+  keywords: ["blog energia solar", "painéis solares", "fotovoltaico"],
 });
 
 export default function BlogIndexPage() {
@@ -47,7 +47,7 @@ export default function BlogIndexPage() {
               Blog CalculaSolar
             </h1>
             <p className="mt-4 text-lg text-navy-700/70">
-              Guias e análises com dados reais de irradiação solar (GHI) do nosso banco nacional.
+              Guias e análises com dados reais de geração solar por cidade no Brasil.
             </p>
 
             <AdSlot position="inline-content" className="my-8 h-20 sm:h-24" />

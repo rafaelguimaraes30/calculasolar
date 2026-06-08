@@ -22,11 +22,6 @@ export function SolarSimulation({ initial }: SolarSimulationProps) {
         loading={simulator.loading}
         hasSimulated={simulator.hasSimulated}
         animationKey={simulator.animationKey}
-        loadingGhiLabel={
-          simulator.ghiPreview
-            ? `GHI ${simulator.ghiPreview.ghi.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} kWh/m²/dia · ${simulator.ghiPreview.mensagem}`
-            : null
-        }
       />
     </>
   );

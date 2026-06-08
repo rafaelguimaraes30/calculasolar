@@ -27,6 +27,8 @@ export type RoofTiltChoice =
   | "30"
   | "35";
 
+export type TarifaModo = "concessionaria" | "manual";
+
 export interface SimulationInput {
   cidade: string;
   estado: string;
@@ -36,6 +38,9 @@ export interface SimulationInput {
   moduloId: string;
   /** Escolha do formulário; resolvida em graus no motor de cálculo */
   inclinacaoEscolha?: RoofTiltChoice;
+  tarifaModo?: TarifaModo;
+  tarifaConcessionariaKey?: string;
+  tarifaManualKwh?: number;
 }
 
 export interface SimulationResult {
@@ -84,6 +89,9 @@ export interface SimulationFormData {
   orientacao: RoofOrientation;
   moduloId: string;
   inclinacao: RoofTiltChoice;
+  tarifaModo: TarifaModo;
+  tarifaConcessionariaKey: string;
+  tarifaManual: string;
 }
 
 export type SimulationFormErrors = Partial<

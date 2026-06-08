@@ -13,7 +13,7 @@ const steps = [
     icon: Sun,
     title: "Simulamos sua geração",
     description:
-      "Cruzamos seus dados com a irradiação solar real da sua região no Brasil para dimensionar o sistema.",
+      "Cruzamos seus dados com informações da sua cidade e região para dimensionar o sistema.",
   },
   {
     number: "03",

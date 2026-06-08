@@ -9,6 +9,7 @@ const links = [
   { href: "#como-funciona", label: "Como funciona" },
   { href: "#simulador", label: "Simulador" },
   { href: "#resultados", label: "Resultados" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export function Navbar() {
@@ -42,12 +43,21 @@ export function Navbar() {
         <ul className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
             <li key={link.href}>
-              <a
-                href={link.href}
-                className="text-sm font-medium text-white/70 transition-colors hover:text-solar-400"
-              >
-                {link.label}
-              </a>
+              {link.href.startsWith("/") ? (
+                <Link
+                  href={link.href}
+                  className="text-sm font-medium text-white/70 transition-colors hover:text-solar-400"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  href={link.href}
+                  className="text-sm font-medium text-white/70 transition-colors hover:text-solar-400"
+                >
+                  {link.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>
@@ -76,13 +86,23 @@ export function Navbar() {
           <ul className="flex flex-col gap-3">
             {links.map((link) => (
               <li key={link.href}>
-                <a
-                  href={link.href}
-                  className="block py-2 text-base font-medium text-white/80"
-                  onClick={() => setOpen(false)}
-                >
-                  {link.label}
-                </a>
+                {link.href.startsWith("/") ? (
+                  <Link
+                    href={link.href}
+                    className="block py-2 text-base font-medium text-white/80"
+                    onClick={() => setOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={link.href}
+                    className="block py-2 text-base font-medium text-white/80"
+                    onClick={() => setOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                )}
               </li>
             ))}
             <li>

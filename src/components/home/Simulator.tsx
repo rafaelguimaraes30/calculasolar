@@ -5,9 +5,8 @@ import type { UseSolarSimulatorReturn } from "@/hooks/useSolarSimulator";
 import { ESTADOS_BR } from "@/lib/solar/constants";
 import { Building2, Home, Loader2, Zap } from "lucide-react";
 import { CityAutocomplete } from "./CityAutocomplete";
-import { HspEducation } from "./HspEducation";
-import { GhiPreviewBadge } from "./GhiPreviewBadge";
-import { TariffPreviewBadge } from "./TariffPreviewBadge";
+import { CityPreviewBadge } from "./CityPreviewBadge";
+import { TariffSelector } from "./TariffSelector";
 import { ModuleSelector } from "./ModuleSelector";
 import { FinancialEducation } from "./FinancialEducation";
 import { ModulesEducation } from "./ModulesEducation";
@@ -23,10 +22,8 @@ export function Simulator({ simulator }: SimulatorProps) {
     form,
     errors,
     loading,
-    ghiPreview,
-    ghiPreviewLoading,
-    tariffPreview,
     updateField,
+    setTarifaModo,
     selectCity,
     handleSubmit,
   } = simulator;
@@ -43,12 +40,12 @@ export function Simulator({ simulator }: SimulatorProps) {
               Faça sua simulação agora
             </h2>
             <p className="mt-4 text-lg text-navy-700/70">
-              Usamos o sol real da sua região (HSP por cidade) para dimensionar painéis,
-              geração e payback com mais precisão.
+              Usamos dados da sua cidade para dimensionar painéis, geração e payback
+              com mais precisão.
             </p>
             <ul className="mt-8 space-y-4">
               {[
-                "HSP automático por cidade e estado",
+                "Localização automática por cidade e estado",
                 "Escolha fabricante e potência do módulo",
                 "Investimento por faixa de kWp do mercado BR",
               ].map((text) => (
@@ -60,7 +57,6 @@ export function Simulator({ simulator }: SimulatorProps) {
                 </li>
               ))}
             </ul>
-            <HspEducation />
             <ModulesEducation />
             <FinancialEducation />
           </div>
@@ -109,12 +105,28 @@ export function Simulator({ simulator }: SimulatorProps) {
                   </FormField>
                 </div>
 
-                <div className="sm:col-span-2 space-y-3">
-                  <TariffPreviewBadge lookup={tariffPreview} />
-                  {(ghiPreview || ghiPreviewLoading) && (
-                    <GhiPreviewBadge lookup={ghiPreview} loading={ghiPreviewLoading} />
-                  )}
-                </div>
+                {form.cidade.trim() && (
+                  <div className="sm:col-span-2">
+                    <CityPreviewBadge cidade={form.cidade} estado={form.estado} />
+                  </div>
+                )}
+
+                <TariffSelector
+                  key={form.estado}
+                  estado={form.estado}
+                  tarifaModo={form.tarifaModo}
+                  tarifaConcessionariaKey={form.tarifaConcessionariaKey}
+                  tarifaManual={form.tarifaManual}
+                  onModoChange={setTarifaModo}
+                  onConcessionariaChange={(key) =>
+                    updateField("tarifaConcessionariaKey", key)
+                  }
+                  onManualChange={(value) => updateField("tarifaManual", value)}
+                  errors={{
+                    tarifaConcessionariaKey: errors.tarifaConcessionariaKey,
+                    tarifaManual: errors.tarifaManual,
+                  }}
+                />
 
                 <div className="sm:col-span-2">
                   <FormField
@@ -206,9 +218,7 @@ export function Simulator({ simulator }: SimulatorProps) {
                 {loading ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
-                    {ghiPreview
-                      ? `Calculando com GHI ${ghiPreview.ghi.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} kWh/m²/dia...`
-                      : "Calculando dimensionamento..."}
+                    Calculando dimensionamento...
                   </>
                 ) : (
                   <>

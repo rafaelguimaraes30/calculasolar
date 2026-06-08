@@ -107,7 +107,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
             <div className="mt-12 rounded-2xl border border-solar-500/20 bg-solar-500/8 p-6 text-center">
               <p className="font-semibold text-navy-900">Simule para sua cidade</p>
               <p className="mt-2 text-sm text-navy-700/70">
-                Use o simulador gratuito com dados reais de GHI do Brasil.
+                Use o simulador gratuito com dados reais da sua cidade.
               </p>
               <Link
                 href="/simulador"

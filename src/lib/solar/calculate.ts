@@ -96,6 +96,9 @@ export function calculateSolarSimulation(
     geracaoMensalKwh,
     consumoMensalKwh,
     estado,
+    tarifaModo: input.tarifaModo,
+    tarifaConcessionariaKey: input.tarifaConcessionariaKey,
+    tarifaManualKwh: input.tarifaManualKwh,
   });
 
   return {

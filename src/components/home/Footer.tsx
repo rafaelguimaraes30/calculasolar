@@ -34,8 +34,8 @@ export function Footer() {
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-navy-700/65">
               Simulador gratuito de energia solar para residências e comércios no
-              Brasil. Descubra quantos painéis você precisa com dados reais de
-              irradiação.
+              Brasil. Descubra quantos painéis você precisa com dados reais da
+              sua cidade.
             </p>
             <div className="mt-6 space-y-2 text-sm text-navy-700/60">
               <p className="flex items-center gap-2">

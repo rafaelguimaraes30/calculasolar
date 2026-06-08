@@ -31,7 +31,7 @@ export function Hero() {
 
             <p className="animate-fade-up animation-delay-200 mx-auto mt-6 max-w-xl text-lg leading-relaxed text-white/70 lg:mx-0">
               Simule gratuitamente a geração de energia solar da sua residência ou
-              comércio usando dados reais de irradiação solar do Brasil.
+              comércio usando dados reais da sua cidade no Brasil.
             </p>
 
             <div className="animate-fade-up animation-delay-300 mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">

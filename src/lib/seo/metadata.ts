@@ -47,8 +47,7 @@ export function defaultSiteMetadata(): Metadata {
       "painéis solares",
       "simulador solar",
       "fotovoltaico",
-      "GHI",
-      "irradiação solar",
+      "simulador gratuito",
     ],
   });
 }

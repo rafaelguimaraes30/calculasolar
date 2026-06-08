@@ -18,7 +18,7 @@ export default function Home() {
     operatingSystem: "Web",
     offers: { "@type": "Offer", price: "0", priceCurrency: "BRL" },
     description:
-      "Simulador gratuito de energia solar com dados reais de GHI para todo o Brasil.",
+      "Simulador gratuito de energia solar com dados reais para todo o Brasil.",
   };
 
   return (

@@ -27,19 +27,11 @@ export function CalculationParamsCard({
   delayBaseMs = 400,
 }: CalculationParamsCardProps) {
   const fmt = (n: number, digits = 1) => formatDecimal(n, digits);
-  const fmtCoord = (n: number) =>
-    n.toLocaleString("pt-BR", {
-      minimumFractionDigits: 4,
-      maximumFractionDigits: 4,
-    });
-
   const inclinacaoLabel = result.inclinacaoAutomatica
     ? `${fmt(result.inclinacaoUtilizada, 1)}° (automática)`
     : `${fmt(result.inclinacaoUtilizada, 0)}°`;
 
-  const ghiLabel = result.ghiLookup.hasMonthlyData
-    ? `${fmt(result.ghi)} kWh/m²/dia (média de 12 meses)`
-    : `${fmt(result.ghi)} kWh/m²/dia`;
+  const localizacao = `${result.input.cidade} — ${result.input.estado}`;
 
   return (
     <div
@@ -62,16 +54,11 @@ export function CalculationParamsCard({
         </div>
       </div>
 
-      <div className="grid gap-3 p-6 sm:grid-cols-2 lg:grid-cols-5 sm:p-8">
-        <ParamRow label="Cidade" value={result.input.cidade} />
-        <ParamRow label="UF" value={result.input.estado} />
-        <ParamRow label="Latitude" value={`${fmtCoord(result.latitude)}°`} />
-        <ParamRow label="Longitude" value={`${fmtCoord(result.longitude)}°`} />
-        <ParamRow label="GHI médio utilizado" value={ghiLabel} />
+      <div className="grid gap-3 p-6 sm:grid-cols-2 lg:grid-cols-3 sm:p-8">
+        <ParamRow label="Localização" value={localizacao} />
         <ParamRow label="Inclinação ideal" value={`${fmt(result.tiltIdeal, 1)}°`} />
         <ParamRow label="Inclinação utilizada" value={inclinacaoLabel} />
         <ParamRow label="Orientação do telhado" value={result.orientacaoLabel} />
-        <ParamRow label="HSP efetivo" value={`${fmt(result.hspEfetivo)} h/dia`} />
         <ParamRow
           label="PR utilizado"
           value={fmt(result.performanceRatio ?? PERFORMANCE_RATIO, 2)}

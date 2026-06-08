@@ -41,7 +41,7 @@ const benefits: {
     icon: TrendingUp,
     title: "Geração estimada",
     description:
-      "Projeção de kWh mensal e anual com base na irradiação solar da sua região.",
+      "Projeção de kWh mensal e anual com base na localização informada.",
     stat: "kWh reais",
     gradient: "from-solar-500/25 to-solar-600/5",
   },

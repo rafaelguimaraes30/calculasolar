@@ -1,7 +1,6 @@
 "use client";
 
 import { fieldClassName } from "@/components/ui/FormField";
-import { lookupGHI } from "@/lib/solar/ghiData";
 import {
   searchMunicipios,
   type MunicipioSearchResult,
@@ -89,14 +88,6 @@ export function CityAutocomplete({
     }
   }
 
-  function ghiPreview(record: MunicipioSearchResult): string {
-    const lookup = lookupGHI(record.nome, record.uf);
-    return lookup.ghi.toLocaleString("pt-BR", {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1,
-    });
-  }
-
   return (
     <div
       ref={containerRef}
@@ -147,7 +138,7 @@ export function CityAutocomplete({
             >
               <button
                 type="button"
-                className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
+                className={`flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors ${
                   index === highlightIndex
                     ? "bg-solar-500/15 text-navy-900"
                     : "text-navy-800 hover:bg-slate-50"
@@ -156,9 +147,6 @@ export function CityAutocomplete({
                 onClick={() => selectRecord(record)}
               >
                 <span className="font-medium">{record.label}</span>
-                <span className="shrink-0 text-xs text-navy-700/50">
-                  GHI {ghiPreview(record)} kWh/m²/dia
-                </span>
               </button>
             </li>
           ))}

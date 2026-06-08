@@ -1,4 +1,9 @@
-import { lookupTariff, type TariffLookupResult } from "./tariffData";
+import {
+  resolveTarifaParaSimulacao,
+  type TarifaFonte,
+  type TarifaConcessionariaRecord,
+} from "./tarifasCursorData";
+import type { TariffLookupResult } from "./tariffData";
 
 /** Reajuste médio anual da tarifa de energia (mercado brasileiro) */
 export const REAJUSTE_TARIFARIO_ANUAL = 0.06;
@@ -25,6 +30,9 @@ export interface FinancialCalculationInput {
   geracaoMensalKwh: number;
   consumoMensalKwh: number;
   estado: string;
+  tarifaModo?: "concessionaria" | "manual";
+  tarifaConcessionariaKey?: string;
+  tarifaManualKwh?: number;
 }
 
 export interface FinancialCalculationResult {
@@ -33,6 +41,9 @@ export interface FinancialCalculationResult {
   faixaInvestimento: InvestmentTier;
   tarifaLookup: TariffLookupResult;
   tarifaKwh: number;
+  tarifaFonte: TarifaFonte;
+  tarifaConcessionariaKey?: string;
+  tarifaConcessionaria?: TarifaConcessionariaRecord;
   economiaMensalReais: number;
   economiaAnualReais: number;
   paybackSimplesAnos: number;
@@ -136,14 +147,27 @@ export function calculateSavingsOverYears(
 
 class LocalFinancialProvider implements FinancialDataProvider {
   calculate(input: FinancialCalculationInput): FinancialCalculationResult {
-    const { potenciaInstaladaKwp, geracaoMensalKwh, consumoMensalKwh, estado } =
-      input;
+    const {
+      potenciaInstaladaKwp,
+      geracaoMensalKwh,
+      consumoMensalKwh,
+      estado,
+      tarifaModo = "concessionaria",
+      tarifaConcessionariaKey,
+      tarifaManualKwh,
+    } = input;
 
     const { total: investimentoTotalReais, tier: faixaInvestimento } =
       calculateInvestmentTotal(potenciaInstaladaKwp);
 
-    const tarifaLookup = lookupTariff(estado);
-    const tarifaKwh = tarifaLookup.tarifaKwh;
+    const tarifaResolvida = resolveTarifaParaSimulacao({
+      estado,
+      tarifaModo,
+      tarifaConcessionariaKey,
+      tarifaManualKwh,
+    });
+    const tarifaLookup = tarifaResolvida.lookup;
+    const tarifaKwh = tarifaResolvida.tarifaKwh;
 
     const { economiaMensalReais, kwhCompensadosMes } = calculateMonthlySavings(
       geracaoMensalKwh,
@@ -174,6 +198,9 @@ class LocalFinancialProvider implements FinancialDataProvider {
       faixaInvestimento,
       tarifaLookup,
       tarifaKwh,
+      tarifaFonte: tarifaResolvida.fonte,
+      tarifaConcessionariaKey: tarifaResolvida.concessionariaKey,
+      tarifaConcessionaria: tarifaResolvida.concessionaria,
       economiaMensalReais,
       economiaAnualReais,
       paybackSimplesAnos,

@@ -60,6 +60,20 @@ export function validateSimulationForm(
     errors.moduloId = "Módulo selecionado inválido.";
   }
 
+  if (data.tarifaModo === "manual") {
+    const manualStr = data.tarifaManual.trim().replace(",", ".");
+    if (!manualStr) {
+      errors.tarifaManual = "Informe a tarifa em R$/kWh.";
+    } else {
+      const manual = Number(manualStr);
+      if (Number.isNaN(manual) || manual <= 0) {
+        errors.tarifaManual = "Tarifa deve ser um valor positivo.";
+      } else if (manual > 10) {
+        errors.tarifaManual = "Tarifa parece alta demais. Verifique o valor.";
+      }
+    }
+  }
+
   return errors;
 }
 

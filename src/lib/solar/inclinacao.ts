@@ -2,7 +2,7 @@ import type { RoofTiltChoice } from "@/types/solar";
 import { getOptimalTilt } from "./transposition";
 
 export const ROOF_TILT_OPTIONS: { value: RoofTiltChoice; label: string }[] = [
-  { value: "nao_sei", label: "Não sei (recomendado)" },
+  { value: "nao_sei", label: "Não sei" },
   { value: "5", label: "5°" },
   { value: "10", label: "10°" },
   { value: "15", label: "15°" },

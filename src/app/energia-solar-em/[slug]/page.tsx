@@ -36,14 +36,13 @@ export async function generateMetadata({ params }: PageProps) {
 
   return buildPageMetadata({
     title: `Energia Solar em ${municipio.nome} — ${municipio.uf}`,
-    description: `Potencial solar em ${municipio.nome}-${municipio.uf}. GHI médio de ${fmt.ghi}, geração de ${fmt.geracaoAnual} com 5 kWp e economia de ${fmt.economiaAnual}. Simule grátis.`,
+    description: `Potencial solar em ${municipio.nome}-${municipio.uf}. Geração de ${fmt.geracaoAnual} com 5 kWp e economia de ${fmt.economiaAnual}. Simule grátis.`,
     path: `/energia-solar-em/${slug}`,
     keywords: [
       "energia solar",
       municipio.nome,
       municipio.uf,
       "painéis solares",
-      "GHI",
       "fotovoltaico",
       "simulador solar",
     ],
@@ -63,7 +62,7 @@ export default async function MunicipioSolarPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: `Energia Solar em ${municipio.nome}`,
-    description: `Potencial solar em ${municipio.nome}-${municipio.uf}. GHI ${fmt.ghi}.`,
+    description: `Potencial solar em ${municipio.nome}-${municipio.uf}. Geração estimada de ${fmt.geracaoAnual} com 5 kWp.`,
     url: pageUrl,
     isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
     about: {

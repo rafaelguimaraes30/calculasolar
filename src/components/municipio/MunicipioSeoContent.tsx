@@ -20,7 +20,6 @@ export function MunicipioSeoContent({ municipio }: MunicipioSeoContentProps) {
   const simuladorUrl = buildSimuladorUrl(municipio.nome, municipio.uf);
 
   const stats = [
-    { label: "GHI médio local", value: fmt.ghi },
     { label: "Geração 5 kWp/ano", value: fmt.geracaoAnual },
     { label: "Geração 5 kWp/mês", value: fmt.geracaoMensal },
     { label: "Economia anual est.", value: fmt.economiaAnual },

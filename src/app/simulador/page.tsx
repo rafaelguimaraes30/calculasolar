@@ -16,7 +16,7 @@ interface PageProps {
 export const metadata = buildPageMetadata({
   title: "Simulador de Energia Solar",
   description:
-    "Simule painéis solares para sua casa ou negócio com dados reais de GHI, tarifa e módulos fotovoltaicos.",
+    "Simule painéis solares para sua casa ou negócio com tarifa e módulos fotovoltaicos da sua região.",
   path: "/simulador",
   keywords: ["simulador solar", "energia solar", "painéis fotovoltaicos"],
 });

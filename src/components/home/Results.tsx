@@ -12,14 +12,13 @@ import { AdSlot } from "@/components/ads/AdSlot";
 import { CalculationParamsCard } from "./CalculationParamsCard";
 import { FinancialResultsCard } from "./FinancialResultsCard";
 import { GenerationSeasonChart } from "./GenerationSeasonChart";
-import { getHspSourceLabel } from "@/lib/solar/solarData";
 import type { SimulationResult } from "@/types/solar";
 import {
   Calendar,
-  Compass,
   Coins,
   LayoutGrid,
   Loader2,
+  MapPin,
   Maximize2,
   Sun,
   TrendingUp,
@@ -32,7 +31,6 @@ interface ResultsProps {
   loading: boolean;
   hasSimulated: boolean;
   animationKey: number;
-  loadingGhiLabel?: string | null;
 }
 
 function MetricCard({
@@ -73,7 +71,7 @@ function MetricCard({
   );
 }
 
-function LoadingOverlay({ hspHint }: { hspHint?: string | null }) {
+function LoadingOverlay() {
   return (
     <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
       <div className="relative">
@@ -82,7 +80,7 @@ function LoadingOverlay({ hspHint }: { hspHint?: string | null }) {
       </div>
       <p className="mt-6 text-lg font-semibold text-white">Dimensionando seu sistema...</p>
       <p className="mt-2 max-w-md text-center text-sm text-white/50">
-        {hspHint ?? "Consultando irradiação solar · orientação do telhado · PR 0,8"}
+        Aplicando orientação do telhado · tarifa · módulos selecionados
       </p>
     </div>
   );
@@ -112,13 +110,12 @@ export function Results({
   loading,
   hasSimulated,
   animationKey,
-  loadingGhiLabel,
 }: ResultsProps) {
   const tipoLabel =
     result?.input.tipoImovel === "comercial" ? "comércio" : "residência";
 
   const subtitle = result
-    ? `Simulação para ${formatInteger(result.input.consumoMensalKwh)} kWh/mês em ${capitalizeWords(result.input.cidade)} — ${result.input.estado}, ${tipoLabel}, telhado ${result.orientacaoLabel}, HSP ${result.hsp.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} h/dia.`
+    ? `Simulação para ${formatInteger(result.input.consumoMensalKwh)} kWh/mês em ${capitalizeWords(result.input.cidade)} — ${result.input.estado}, ${tipoLabel}, telhado ${result.orientacaoLabel}.`
     : "Resultados calculados com base nos seus dados.";
 
   const metrics = result
@@ -184,7 +181,7 @@ export function Results({
           <p className="mt-4 text-lg text-white/60">{subtitle}</p>
         </div>
 
-        {loading && <LoadingOverlay hspHint={loadingGhiLabel} />}
+        {loading && <LoadingOverlay />}
 
         {!loading && !hasSimulated && (
           <div className="mt-14">
@@ -194,46 +191,32 @@ export function Results({
 
         {!loading && hasSimulated && result && (
           <div key={animationKey}>
-            <div className="mx-auto mt-8 flex max-w-3xl flex-col items-center gap-2 sm:flex-row sm:justify-center">
+            <div className="mx-auto mt-8 flex max-w-3xl flex-wrap items-center justify-center gap-2">
               <div
                 className="flex w-fit flex-wrap items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 opacity-0 animate-fade-up"
                 style={{ animationDelay: "50ms", animationFillMode: "forwards" }}
               >
-                <Sun className="h-4 w-4 text-solar-400" />
+                <MapPin className="h-4 w-4 text-solar-400" />
                 <span className="text-sm text-white/80">
-                  HSP:{" "}
                   <strong className="text-white">
-                    {result.hsp.toLocaleString("pt-BR", {
-                      minimumFractionDigits: 1,
-                      maximumFractionDigits: 1,
-                    })}{" "}
-                    h/dia
+                    {capitalizeWords(result.input.cidade)} — {result.input.estado}
                   </strong>
-                </span>
-                <span className="rounded-full bg-solar-500/20 px-2.5 py-0.5 text-xs font-semibold text-solar-400">
-                  {getHspSourceLabel(result.hspLookup.source)}
                 </span>
               </div>
               <div
                 className="flex w-fit flex-wrap items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 opacity-0 animate-fade-up"
                 style={{ animationDelay: "120ms", animationFillMode: "forwards" }}
               >
-                <Compass className="h-4 w-4 text-solar-400" />
+                <Sun className="h-4 w-4 text-solar-400" />
                 <span className="text-sm text-white/80">
                   Telhado: <strong className="text-white">{result.orientacaoLabel}</strong>
                 </span>
               </div>
             </div>
-            <p
-              className="mx-auto mt-3 max-w-xl text-center text-xs text-white/45 opacity-0 animate-fade-in"
-              style={{ animationDelay: "180ms", animationFillMode: "forwards" }}
-            >
-              {result.hspLookup.mensagem}
-            </p>
 
             <p
               className="mx-auto mt-4 max-w-2xl text-center text-sm text-white/55 opacity-0 animate-fade-in"
-              style={{ animationDelay: "220ms", animationFillMode: "forwards" }}
+              style={{ animationDelay: "180ms", animationFillMode: "forwards" }}
             >
               {result.modulo.fabricante} · {result.modulo.modelo} ({result.modulo.potenciaW} W)
             </p>

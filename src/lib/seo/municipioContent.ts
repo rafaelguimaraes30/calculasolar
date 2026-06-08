@@ -2,17 +2,17 @@ import type { MunicipioSearchResult } from "@/lib/solar/municipiosData";
 import type { MunicipioSolarPreview } from "@/lib/solar/municipioPreview";
 import { formatDecimal } from "@/lib/solar/format";
 
-type GhiTier = "excelente" | "bom" | "moderado";
+type SolarTier = "excelente" | "bom" | "moderado";
 
-function classifyGhi(ghi: number): GhiTier {
-  if (ghi >= 5.5) return "excelente";
-  if (ghi >= 5.0) return "bom";
+function classifySolarPotential(ghiMedio: number): SolarTier {
+  if (ghiMedio >= 5.5) return "excelente";
+  if (ghiMedio >= 5.0) return "bom";
   return "moderado";
 }
 
-const GHI_INTRO: Record<GhiTier, string> = {
+const SOLAR_INTRO: Record<SolarTier, string> = {
   excelente:
-    "apresenta um dos melhores índices de irradiação solar do país, ideal para sistemas fotovoltaicos de alta performance",
+    "apresenta excelente potencial para sistemas fotovoltaicos de alta performance",
   bom: "oferece condições favoráveis para geração de energia solar, com bom retorno sobre investimento",
   moderado:
     "possui potencial solar viável, especialmente com orientação e inclinação adequadas do telhado",
@@ -36,24 +36,22 @@ export function buildMunicipioSeoSections(
   municipio: MunicipioSearchResult,
   preview: MunicipioSolarPreview,
   fmt: {
-    ghi: string;
     geracaoAnual: string;
     geracaoMensal: string;
     economiaAnual: string;
-    hsp: string;
   },
 ): MunicipioSeoSection[] {
-  const tier = classifyGhi(preview.ghiMedio);
+  const tier = classifySolarPotential(preview.ghiMedio);
   const regiao = REGION_LABELS[municipio.uf] ?? "Brasil";
   const tilt = formatDecimal(preview.tiltIdeal, 1);
 
   return [
     {
       paragraphs: [
-        `${municipio.nome}, localizada na região ${regiao} (${municipio.uf}), ${GHI_INTRO[tier]}. ` +
-          `Com GHI médio de ${fmt.ghi}, a cidade permite dimensionar sistemas fotovoltaicos com dados reais de irradiação.`,
-        `Para referência, um sistema residencial de 5 kWp instalado em ${municipio.nome} — com telhado voltado ao Norte, ` +
-          `inclinação ideal de ${tilt}° e HSP efetivo de ${fmt.hsp} — pode gerar cerca de ${fmt.geracaoAnual} ` +
+        `${municipio.nome}, localizada na região ${regiao} (${municipio.uf}), ${SOLAR_INTRO[tier]}. ` +
+          `A cidade permite dimensionar sistemas fotovoltaicos com dados reais de localização e tarifa.`,
+        `Para referência, um sistema residencial de 5 kWp instalado em ${municipio.nome} — com telhado voltado ao Norte ` +
+          `e inclinação ideal de ${tilt}° — pode gerar cerca de ${fmt.geracaoAnual} ` +
           `(${fmt.geracaoMensal} em média).`,
       ],
     },
@@ -73,10 +71,10 @@ export function buildMunicipioSeoSections(
         tier === "excelente"
           ? `${municipio.nome} está entre os municípios com maior potencial solar do Brasil, ` +
             "o que reduz o tempo de retorno do investimento em painéis fotovoltaicos."
-          : `${municipio.nome} conta com irradiação suficiente para atender residências e pequenos comércios ` +
+          : `${municipio.nome} conta com potencial suficiente para atender residências e pequenos comércios ` +
             "com sistemas bem dimensionados.",
         `Use o simulador CalculaSolar para informar seu consumo mensal em kWh e obter o dimensionamento personalizado ` +
-          `para ${municipio.nome}-${municipio.uf}, com dados de GHI, tarifa e módulos atualizados.`,
+          `para ${municipio.nome}-${municipio.uf}, com tarifa e módulos atualizados.`,
       ],
     },
   ];

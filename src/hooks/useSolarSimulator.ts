@@ -3,8 +3,10 @@
 import { calculateSolarSimulation } from "@/lib/solar/calculate";
 import { LOADING_DURATION_MS } from "@/lib/solar/constants";
 import { DEFAULT_MODULE_ID } from "@/lib/solar/modulesData";
-import { lookupGHI } from "@/lib/solar/ghiData";
-import { lookupTariff } from "@/lib/solar/tariffData";
+import {
+  getTarifaByKey,
+  resolveTarifaParaSimulacao,
+} from "@/lib/solar/tarifasCursorData";
 import { hasFormErrors, validateSimulationForm } from "@/lib/solar/validate";
 import type {
   PropertyType,
@@ -12,10 +14,9 @@ import type {
   SimulationFormErrors,
   SimulationInput,
   SimulationResult,
-  RoofOrientation,
-  RoofTiltChoice,
+  TarifaModo,
 } from "@/types/solar";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 export interface SolarSimulatorInitialValues {
   cidade?: string;
@@ -31,13 +32,21 @@ const defaultForm: SimulationFormData = {
   orientacao: "norte",
   inclinacao: "nao_sei",
   moduloId: DEFAULT_MODULE_ID,
+  tarifaModo: "concessionaria",
+  tarifaConcessionariaKey: "",
+  tarifaManual: "",
 };
+
+function parseTarifaManual(value: string): number | undefined {
+  const parsed = Number(value.trim().replace(",", "."));
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+}
 
 function buildSimulationInput(form: SimulationFormData): SimulationInput | null {
   const consumo = Number(form.consumo);
   if (!Number.isFinite(consumo) || !form.cidade.trim()) return null;
 
-  return {
+  const input: SimulationInput = {
     cidade: form.cidade.trim(),
     estado: form.estado,
     consumoMensalKwh: consumo,
@@ -45,7 +54,16 @@ function buildSimulationInput(form: SimulationFormData): SimulationInput | null 
     orientacaoTelhado: form.orientacao,
     moduloId: form.moduloId,
     inclinacaoEscolha: form.inclinacao,
+    tarifaModo: form.tarifaModo,
+    tarifaConcessionariaKey: form.tarifaConcessionariaKey || undefined,
   };
+
+  if (form.tarifaModo === "manual") {
+    const manual = parseTarifaManual(form.tarifaManual);
+    if (manual !== undefined) input.tarifaManualKwh = manual;
+  }
+
+  return input;
 }
 
 export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
@@ -60,70 +78,51 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
   const [loading, setLoading] = useState(false);
   const [hasSimulated, setHasSimulated] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
-  const [ghiPreview, setGhiPreview] = useState<ReturnType<typeof lookupGHI> | null>(null);
-  const [ghiPreviewLoading, setGhiPreviewLoading] = useState(false);
   const tariffPreview = useMemo(
-    () => lookupTariff(form.estado),
-    [form.estado],
+    () =>
+      resolveTarifaParaSimulacao({
+        estado: form.estado,
+        tarifaModo: form.tarifaModo,
+        tarifaConcessionariaKey: form.tarifaConcessionariaKey,
+        tarifaManualKwh: parseTarifaManual(form.tarifaManual),
+      }),
+    [
+      form.estado,
+      form.tarifaModo,
+      form.tarifaConcessionariaKey,
+      form.tarifaManual,
+    ],
   );
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const ghiDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastSimulatedParamsRef = useRef<{
-    orientacao: RoofOrientation;
-    inclinacao: RoofTiltChoice;
-  } | null>(null);
+  const lastSimulatedParamsRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (ghiDebounceRef.current) clearTimeout(ghiDebounceRef.current);
-
-    const cidade = form.cidade.trim();
-    if (cidade.length < 2) {
-      setTimeout(() => {
-        setGhiPreview(null);
-        setGhiPreviewLoading(false);
-      }, 0);
-      return;
-    }
-
-    const loadingTimer = setTimeout(() => setGhiPreviewLoading(true), 0);
-    ghiDebounceRef.current = setTimeout(() => {
-      setGhiPreview(lookupGHI(cidade, form.estado));
-      setGhiPreviewLoading(false);
-    }, 280);
-
-    return () => {
-      clearTimeout(loadingTimer);
-      if (ghiDebounceRef.current) clearTimeout(ghiDebounceRef.current);
-    };
-  }, [form.cidade, form.estado]);
+  const getRecalcSignature = useCallback((formData: SimulationFormData) => {
+    return JSON.stringify({
+      orientacao: formData.orientacao,
+      inclinacao: formData.inclinacao,
+      tarifaModo: formData.tarifaModo,
+      tarifaConcessionariaKey: formData.tarifaConcessionariaKey,
+      tarifaManual: formData.tarifaManual,
+    });
+  }, []);
 
   const recalculateIfSimulated = useCallback(
     (formData: SimulationFormData) => {
       if (!hasSimulated || loading) return;
 
-      const last = lastSimulatedParamsRef.current;
-      if (
-        last &&
-        last.orientacao === formData.orientacao &&
-        last.inclinacao === formData.inclinacao
-      ) {
-        return;
-      }
+      const signature = getRecalcSignature(formData);
+      if (lastSimulatedParamsRef.current === signature) return;
 
       const input = buildSimulationInput(formData);
       if (!input) return;
 
       const simulation = calculateSolarSimulation(input);
 
-      setGhiPreview(simulation.ghiLookup);
       setResult(simulation);
       setAnimationKey((k) => k + 1);
-      lastSimulatedParamsRef.current = {
-        orientacao: formData.orientacao,
-        inclinacao: formData.inclinacao,
-      };
+      lastSimulatedParamsRef.current = signature;
     },
-    [hasSimulated, loading],
+    [getRecalcSignature, hasSimulated, loading],
   );
 
   const updateField = useCallback(
@@ -132,9 +131,27 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
       value: SimulationFormData[K],
     ) => {
       setForm((prev) => {
-        const next = { ...prev, [field]: value };
+        let next = { ...prev, [field]: value };
 
-        if (field === "orientacao" || field === "inclinacao") {
+        if (
+          field === "estado" &&
+          prev.tarifaModo === "concessionaria" &&
+          prev.tarifaConcessionariaKey
+        ) {
+          const record = getTarifaByKey(prev.tarifaConcessionariaKey);
+          if (!record || record.uf !== value) {
+            next = { ...next, tarifaConcessionariaKey: "" };
+          }
+        }
+
+        if (
+          field === "orientacao" ||
+          field === "inclinacao" ||
+          field === "tarifaModo" ||
+          field === "tarifaConcessionariaKey" ||
+          field === "tarifaManual" ||
+          field === "estado"
+        ) {
           recalculateIfSimulated(next);
         }
 
@@ -150,11 +167,36 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
     [recalculateIfSimulated],
   );
 
+  const setTarifaModo = useCallback(
+    (modo: TarifaModo) => {
+      setForm((prev) => {
+        const next = { ...prev, tarifaModo: modo };
+        recalculateIfSimulated(next);
+        return next;
+      });
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next.tarifaManual;
+        delete next.tarifaConcessionariaKey;
+        return next;
+      });
+    },
+    [recalculateIfSimulated],
+  );
+
   const selectCity = useCallback(
     (cidade: string, estado: string) => {
-      setForm((prev) => ({ ...prev, cidade, estado }));
-      setGhiPreview(lookupGHI(cidade, estado));
-      setGhiPreviewLoading(false);
+      setForm((prev) => {
+        const next = {
+          ...prev,
+          cidade,
+          estado,
+          tarifaConcessionariaKey:
+            prev.tarifaModo === "concessionaria" ? "" : prev.tarifaConcessionariaKey,
+        };
+        recalculateIfSimulated(next);
+        return next;
+      });
       setErrors((prev) => {
         if (!prev.cidade) return prev;
         const next = { ...prev };
@@ -162,7 +204,7 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
         return next;
       });
     },
-    [],
+    [recalculateIfSimulated],
   );
 
   const submit = useCallback(() => {
@@ -188,12 +230,8 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
 
       const simulation = calculateSolarSimulation(input);
 
-      setGhiPreview(simulation.ghiLookup);
       setResult(simulation);
-      lastSimulatedParamsRef.current = {
-        orientacao: form.orientacao,
-        inclinacao: form.inclinacao,
-      };
+      lastSimulatedParamsRef.current = getRecalcSignature(form);
       setHasSimulated(true);
       setAnimationKey((k) => k + 1);
       setLoading(false);
@@ -206,7 +244,7 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
     }, LOADING_DURATION_MS);
 
     return true;
-  }, [form]);
+  }, [form, getRecalcSignature]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -223,10 +261,9 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
     loading,
     hasSimulated,
     animationKey,
-    ghiPreview,
-    ghiPreviewLoading,
     tariffPreview,
     updateField,
+    setTarifaModo,
     selectCity,
     handleSubmit,
   };
