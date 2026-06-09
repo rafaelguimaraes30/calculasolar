@@ -3,9 +3,10 @@ import { Footer } from "@/components/home/Footer";
 import { Navbar } from "@/components/home/Navbar";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getBlogArticle, getAllBlogSlugs } from "@/lib/blog/articles";
+import { getBlogArticle, getAllBlogSlugs, getBlogCategoryLabel } from "@/lib/blog/articles";
+import { renderBlogParagraph } from "@/lib/blog/format";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import { SITE_NAME, SITE_URL } from "@/lib/seo/site";
+import { SITE_NAME, SITE_OG_IMAGE, SITE_URL } from "@/lib/seo/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -44,6 +45,11 @@ export default async function BlogArticlePage({ params }: PageProps) {
     headline: article.title,
     description: article.description,
     url: pageUrl,
+    ...(article.publishedAt && {
+      datePublished: article.publishedAt,
+      dateModified: article.publishedAt,
+    }),
+    image: `${SITE_URL}${SITE_OG_IMAGE}`,
     author: { "@type": "Organization", name: SITE_NAME },
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
@@ -79,7 +85,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
 
             <header>
               <span className="text-xs font-semibold uppercase tracking-wider text-solar-600">
-                {article.category}
+                {getBlogCategoryLabel(article.category)}
               </span>
               <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">
                 {article.title}
@@ -97,7 +103,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                   )}
                   {section.paragraphs.map((p, j) => (
                     <p key={j} className="mt-3 text-base leading-relaxed text-navy-700/80">
-                      {p}
+                      {renderBlogParagraph(p)}
                     </p>
                   ))}
                 </section>

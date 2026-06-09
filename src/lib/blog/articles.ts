@@ -3,14 +3,29 @@ import { DEFAULT_MODULE_ID, getModuleById } from "@/lib/solar/modulesData";
 import { calculateSolarSimulation } from "@/lib/solar/calculate";
 import { formatInteger } from "@/lib/solar/format";
 
+export type BlogCategory = "guia" | "cidade" | "equipamento" | "noticias";
+
 export interface BlogArticle {
   slug: string;
   title: string;
   description: string;
   keywords: string[];
-  category: "guia" | "cidade" | "equipamento";
-  /** Conteúdo HTML-safe em parágrafos markdown simples */
+  category: BlogCategory;
+  /** ISO 8601 — usado para ordenação na listagem (mais recente primeiro) */
+  publishedAt?: string;
+  /** Conteúdo em parágrafos; suporta links markdown [texto](/url) */
   sections: { heading?: string; paragraphs: string[] }[];
+}
+
+const CATEGORY_LABELS: Record<BlogCategory, string> = {
+  guia: "guia",
+  cidade: "cidade",
+  equipamento: "equipamento",
+  noticias: "Notícias do Setor",
+};
+
+export function getBlogCategoryLabel(category: BlogCategory): string {
+  return CATEGORY_LABELS[category];
 }
 
 function painel550Simulation() {
@@ -38,6 +53,81 @@ const painel550 = painel550Simulation();
 const sistema5 = sistema5KwpSimulation();
 
 export const BLOG_ARTICLES: BlogArticle[] = [
+  {
+    slug: "ons-plano-emergencial-excedente-energia",
+    title:
+      "ONS aciona plano emergencial inédito: entenda por que o Brasil precisou reduzir a geração de energia",
+    description:
+      "O ONS acionou pela primeira vez um plano emergencial para gerenciar excedentes de energia no sistema elétrico brasileiro. Entenda o que aconteceu, a relação com a energia solar e os impactos para consumidores.",
+    keywords: [
+      "ONS",
+      "ANEEL",
+      "apagão",
+      "energia solar",
+      "excedente de energia",
+      "geração distribuída",
+      "sistema elétrico brasileiro",
+      "energia renovável",
+    ],
+    category: "noticias",
+    publishedAt: "2026-06-09",
+    sections: [
+      {
+        paragraphs: [
+          "O Operador Nacional do Sistema Elétrico (ONS) acionou pela primeira vez um plano emergencial para gerenciamento de excedentes de energia elétrica, após identificar um cenário de elevada geração combinada com baixo consumo em determinadas regiões do país.",
+          "A medida chamou atenção porque demonstra um novo desafio enfrentado pelo sistema elétrico brasileiro: integrar um volume cada vez maior de fontes renováveis, especialmente a [energia solar](/blog/energia-solar-vale-a-pena-2026), mantendo a estabilidade da rede.",
+        ],
+      },
+      {
+        heading: "O que aconteceu?",
+        paragraphs: [
+          "Durante um período de baixa demanda, a produção de energia prevista superou significativamente o consumo esperado.",
+          "Inicialmente o ONS reduziu a geração das grandes usinas conectadas ao Sistema Interligado Nacional.",
+          "Como essa redução não foi suficiente para equilibrar oferta e demanda, foi necessário acionar um plano emergencial aprovado pela ANEEL para limitar temporariamente parte da geração conectada às redes de distribuição.",
+          "A medida teve caráter preventivo e buscou preservar a estabilidade operacional do sistema elétrico.",
+        ],
+      },
+      {
+        heading: "O Brasil quase teve um apagão?",
+        paragraphs: [
+          "Não exatamente.",
+          "O problema não foi falta de energia, mas sim excesso de geração em relação ao consumo naquele momento.",
+          "Em sistemas elétricos modernos, tanto a falta quanto o excesso de geração podem provocar instabilidades na frequência da rede.",
+          "Por isso o operador realiza cortes temporários de geração para manter o equilíbrio entre produção e consumo.",
+        ],
+      },
+      {
+        heading: "Qual a relação com a energia solar?",
+        paragraphs: [
+          "A energia solar vem crescendo rapidamente no Brasil, principalmente através da geração distribuída instalada em residências, empresas e propriedades rurais.",
+          "Esse crescimento é extremamente positivo para a matriz energética nacional, mas exige investimentos em infraestrutura, armazenamento e redes inteligentes para administrar períodos de grande produção.",
+          "Situações semelhantes já ocorrem em diversos países com alta participação de fontes renováveis. Para entender melhor os benefícios da tecnologia, leia nosso guia sobre [como a energia solar reduz a conta de luz](/blog/como-funciona-energia-solar-economia-conta-luz).",
+        ],
+      },
+      {
+        heading: "O consumidor será afetado?",
+        paragraphs: [
+          "Na prática, consumidores residenciais normalmente não percebem essas operações.",
+          "As ações são coordenadas pelo ONS e pelas distribuidoras para preservar a estabilidade do Sistema Interligado Nacional e evitar interrupções no fornecimento de energia.",
+        ],
+      },
+      {
+        heading: "O futuro da energia solar continua positivo",
+        paragraphs: [
+          "O episódio demonstra que a transição energética exige modernização constante da infraestrutura elétrica brasileira.",
+          "O avanço de baterias, Smart Grids e novos mecanismos regulatórios permitirá integrar volumes ainda maiores de geração distribuída sem comprometer a segurança do sistema.",
+          "A energia solar continua sendo uma das alternativas mais econômicas e sustentáveis para consumidores residenciais e empresas. Veja também [quanto custa instalar energia solar em 2026](/blog/quanto-custa-instalar-energia-solar-2026).",
+        ],
+      },
+      {
+        heading: "Faça uma simulação gratuita",
+        paragraphs: [
+          "Quer saber quanto você pode economizar instalando energia solar?",
+          "Utilize gratuitamente o [simulador do CalculaSolar](/simulador) para estimar geração, economia anual, payback e dimensionamento ideal do seu sistema fotovoltaico. Você também pode começar pela [página inicial](/) ou aprender [como calcular quantos painéis solares](/blog/como-calcular-quantos-paineis-solares) você precisa.",
+        ],
+      },
+    ],
+  },
   {
     slug: "energia-solar-vale-a-pena-2026",
     title: "Energia solar vale a pena em 2026?",
@@ -331,4 +421,18 @@ export function getBlogArticle(slug: string): BlogArticle | undefined {
 
 export function getAllBlogSlugs(): string[] {
   return BLOG_ARTICLES.map((a) => a.slug);
+}
+
+/** Artigos ordenados por data de publicação (mais recente primeiro). */
+export function getBlogArticles(): BlogArticle[] {
+  return BLOG_ARTICLES.map((article, index) => ({ article, index })).sort(
+    (a, b) => {
+      const dateA = a.article.publishedAt;
+      const dateB = b.article.publishedAt;
+      if (dateA && dateB) return dateB.localeCompare(dateA);
+      if (dateA) return -1;
+      if (dateB) return 1;
+      return a.index - b.index;
+    },
+  ).map(({ article }) => article);
 }

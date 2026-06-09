@@ -3,7 +3,7 @@ import { Footer } from "@/components/home/Footer";
 import { Navbar } from "@/components/home/Navbar";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { BLOG_ARTICLES } from "@/lib/blog/articles";
+import { getBlogArticles, getBlogCategoryLabel } from "@/lib/blog/articles";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { SITE_NAME, SITE_URL } from "@/lib/seo/site";
 import Link from "next/link";
@@ -17,12 +17,14 @@ export const metadata = buildPageMetadata({
 });
 
 export default function BlogIndexPage() {
+  const articles = getBlogArticles();
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
     name: `Blog ${SITE_NAME}`,
     url: `${SITE_URL}/blog`,
-    blogPost: BLOG_ARTICLES.map((a) => ({
+    blogPost: articles.map((a) => ({
       "@type": "BlogPosting",
       headline: a.title,
       url: `${SITE_URL}/blog/${a.slug}`,
@@ -53,14 +55,14 @@ export default function BlogIndexPage() {
             <AdSlot position="inline-content" className="my-8 h-20 sm:h-24" />
 
             <ul className="mt-8 space-y-4">
-              {BLOG_ARTICLES.map((article) => (
+              {articles.map((article) => (
                 <li key={article.slug}>
                   <Link
                     href={`/blog/${article.slug}`}
                     className="block rounded-2xl border border-navy-800/10 bg-white p-6 shadow-sm transition-all hover:border-solar-500/30 hover:shadow-md"
                   >
                     <span className="text-xs font-semibold uppercase tracking-wider text-solar-600">
-                      {article.category}
+                      {getBlogCategoryLabel(article.category)}
                     </span>
                     <h2 className="mt-2 text-xl font-bold text-navy-900">{article.title}</h2>
                     <p className="mt-2 text-sm text-navy-700/70">{article.description}</p>
