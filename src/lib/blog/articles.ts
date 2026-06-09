@@ -436,3 +436,31 @@ export function getBlogArticles(): BlogArticle[] {
     },
   ).map(({ article }) => article);
 }
+
+/** Artigos mais recentes para a central de notícias e destaques na home. */
+export function getRecentNewsArticles(limit = 12): BlogArticle[] {
+  return getBlogArticles().slice(0, limit);
+}
+
+function relatedArticleScore(current: BlogArticle, candidate: BlogArticle): number {
+  let score = 0;
+  if (current.category === candidate.category) score += 3;
+  const sharedKeywords = current.keywords.filter((kw) =>
+    candidate.keywords.some((c) => c.toLowerCase() === kw.toLowerCase()),
+  );
+  score += sharedKeywords.length * 2;
+  return score;
+}
+
+/** Artigos relacionados por categoria e palavras-chave. */
+export function getRelatedArticles(slug: string, limit = 3): BlogArticle[] {
+  const current = getBlogArticle(slug);
+  if (!current) return [];
+
+  return getBlogArticles()
+    .filter((article) => article.slug !== slug)
+    .map((article) => ({ article, score: relatedArticleScore(current, article) }))
+    .sort((a, b) => b.score - a.score || a.article.title.localeCompare(b.article.title, "pt-BR"))
+    .slice(0, limit)
+    .map(({ article }) => article);
+}

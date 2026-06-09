@@ -1,11 +1,14 @@
 import { buildSitemapIndexXml } from "@/lib/seo/sitemapXml";
 
 export async function GET() {
-  const xml = buildSitemapIndexXml([
+  const sitemaps = [
     "/sitemap-pages.xml",
     "/sitemap-blog.xml",
     "/sitemap-municipios.xml",
-  ]);
+    "/sitemap-programmatic.xml",
+  ];
+
+  const xml = buildSitemapIndexXml(sitemaps);
 
   return new Response(xml, {
     headers: {

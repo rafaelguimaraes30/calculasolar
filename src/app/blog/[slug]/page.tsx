@@ -3,10 +3,15 @@ import { Footer } from "@/components/home/Footer";
 import { Navbar } from "@/components/home/Navbar";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { RelatedArticles } from "@/components/blog/RelatedArticles";
 import { getBlogArticle, getAllBlogSlugs, getBlogCategoryLabel } from "@/lib/blog/articles";
 import { renderBlogParagraph } from "@/lib/blog/format";
+import {
+  buildArticleJsonLd,
+  buildBreadcrumbJsonLd,
+} from "@/lib/seo/jsonLd";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import { SITE_NAME, SITE_OG_IMAGE, SITE_URL } from "@/lib/seo/site";
+import { SITE_URL } from "@/lib/seo/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -39,30 +44,12 @@ export default async function BlogArticlePage({ params }: PageProps) {
 
   const pageUrl = `${SITE_URL}/blog/${slug}`;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: article.title,
-    description: article.description,
-    url: pageUrl,
-    ...(article.publishedAt && {
-      datePublished: article.publishedAt,
-      dateModified: article.publishedAt,
-    }),
-    image: `${SITE_URL}${SITE_OG_IMAGE}`,
-    author: { "@type": "Organization", name: SITE_NAME },
-    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-  };
-
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
-      { "@type": "ListItem", position: 3, name: article.title, item: pageUrl },
-    ],
-  };
+  const jsonLd = buildArticleJsonLd(article, pageUrl);
+  const breadcrumbLd = buildBreadcrumbJsonLd([
+    { name: "Início", item: SITE_URL },
+    { name: "Blog", item: `${SITE_URL}/blog` },
+    { name: article.title, item: pageUrl },
+  ]);
 
   return (
     <>
@@ -110,17 +97,27 @@ export default async function BlogArticlePage({ params }: PageProps) {
               ))}
             </div>
 
-            <div className="mt-12 rounded-2xl border border-solar-500/20 bg-solar-500/8 p-6 text-center">
+            <RelatedArticles slug={slug} />
+
+            <div className="mt-8 rounded-2xl border border-solar-500/20 bg-solar-500/8 p-6 text-center">
               <p className="font-semibold text-navy-900">Simule para sua cidade</p>
               <p className="mt-2 text-sm text-navy-700/70">
                 Use o simulador gratuito com dados reais da sua cidade.
               </p>
-              <Link
-                href="/simulador"
-                className="mt-4 inline-flex rounded-full bg-gradient-to-r from-solar-500 to-solar-400 px-6 py-2.5 text-sm font-bold text-navy-900 transition-all hover:scale-105"
-              >
-                Ir ao simulador
-              </Link>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  href="/simulador"
+                  className="inline-flex rounded-full bg-gradient-to-r from-solar-500 to-solar-400 px-6 py-2.5 text-sm font-bold text-navy-900 transition-all hover:scale-105"
+                >
+                  Ir ao simulador
+                </Link>
+                <Link
+                  href="/"
+                  className="inline-flex rounded-full border border-navy-800/15 px-6 py-2.5 text-sm font-semibold text-navy-800 transition-colors hover:border-solar-500/40"
+                >
+                  Página inicial
+                </Link>
+              </div>
             </div>
           </div>
         </article>

@@ -10,6 +10,7 @@ const links = [
   { href: "#simulador", label: "Simulador" },
   { href: "#resultados", label: "Resultados" },
   { href: "/blog", label: "Blog" },
+  { href: "/ultimas-noticias", label: "Notícias" },
 ];
 
 export function Navbar() {

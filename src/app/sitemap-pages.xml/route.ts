@@ -1,14 +1,8 @@
+import { getStaticPageSitemapEntries } from "@/lib/seo/sitemapEntries";
 import { buildUrlSetXml } from "@/lib/seo/sitemapXml";
-import { SITE_URL } from "@/lib/seo/site";
 
 export async function GET() {
-  const urls = [
-    SITE_URL,
-    `${SITE_URL}/simulador`,
-    `${SITE_URL}/blog`,
-  ];
-
-  const xml = buildUrlSetXml(urls);
+  const xml = buildUrlSetXml(getStaticPageSitemapEntries());
 
   return new Response(xml, {
     headers: {

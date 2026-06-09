@@ -49,7 +49,11 @@ export default function BlogIndexPage() {
               Blog CalculaSolar
             </h1>
             <p className="mt-4 text-lg text-navy-700/70">
-              Guias e análises com dados reais de geração solar por cidade no Brasil.
+              Guias e análises com dados reais de geração solar por cidade no Brasil.{" "}
+              <Link href="/ultimas-noticias" className="font-medium text-solar-600 hover:text-solar-600/80">
+                Ver últimas notícias
+              </Link>
+              .
             </p>
 
             <AdSlot position="inline-content" className="my-8 h-20 sm:h-24" />

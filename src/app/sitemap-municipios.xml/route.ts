@@ -1,12 +1,8 @@
+import { getMunicipioSitemapEntries } from "@/lib/seo/sitemapEntries";
 import { buildUrlSetXml } from "@/lib/seo/sitemapXml";
-import { SITE_URL } from "@/lib/seo/site";
-import { getAllMunicipioSlugs } from "@/lib/solar/municipiosData";
 
 export async function GET() {
-  const urls = getAllMunicipioSlugs().map(
-    (slug) => `${SITE_URL}/energia-solar-em/${slug}`,
-  );
-  const xml = buildUrlSetXml(urls);
+  const xml = buildUrlSetXml(getMunicipioSitemapEntries());
 
   return new Response(xml, {
     headers: {

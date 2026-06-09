@@ -4,26 +4,19 @@ import { Footer } from "@/components/home/Footer";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Navbar } from "@/components/home/Navbar";
+import { RecentNews } from "@/components/home/RecentNews";
 import { SimuladorClient } from "@/components/simulador/SimuladorClient";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { SITE_NAME, SITE_URL } from "@/lib/seo/site";
+import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/seo/jsonLd";
+import { defaultSiteMetadata } from "@/lib/seo/metadata";
+
+export const metadata = defaultSiteMetadata();
 
 export default function Home() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: SITE_NAME,
-    url: SITE_URL,
-    applicationCategory: "UtilitiesApplication",
-    operatingSystem: "Web",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "BRL" },
-    description:
-      "Simulador gratuito de energia solar com dados reais para todo o Brasil.",
-  };
-
   return (
     <>
-      <JsonLd data={jsonLd} />
+      <JsonLd data={buildWebSiteJsonLd()} />
+      <JsonLd data={buildOrganizationJsonLd()} />
       <Navbar />
       <main>
         <AdSlot position="top-banner" className="mx-auto max-w-7xl px-4 pt-4 h-20 sm:h-24" />
@@ -32,6 +25,7 @@ export default function Home() {
         <AdSlot position="inline-content" className="mx-auto max-w-7xl px-4 h-20 sm:h-24" />
         <HowItWorks />
         <SimuladorClient initial={{}} />
+        <RecentNews />
       </main>
       <Footer />
     </>

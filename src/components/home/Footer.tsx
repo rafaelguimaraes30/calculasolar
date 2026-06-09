@@ -4,13 +4,14 @@ import Link from "next/link";
 
 const footerLinks = {
   Produto: [
-    { label: "Simulador", href: "#simulador" },
-    { label: "Como funciona", href: "#como-funciona" },
-    { label: "Benefícios", href: "#beneficios" },
+    { label: "Simulador", href: "/simulador" },
+    { label: "Como funciona", href: "/#como-funciona" },
+    { label: "Benefícios", href: "/#beneficios" },
   ],
   Empresa: [
     { label: "Sobre nós", href: "#" },
     { label: "Blog", href: "/blog" },
+    { label: "Notícias", href: "/ultimas-noticias" },
     { label: "Contato", href: "#" },
   ],
   Legal: [

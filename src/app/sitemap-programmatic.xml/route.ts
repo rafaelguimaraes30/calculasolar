@@ -1,8 +1,9 @@
-import { getBlogSitemapEntries } from "@/lib/seo/sitemapEntries";
+import { getProgrammaticSitemapEntries } from "@/lib/seo/sitemapEntries";
 import { buildUrlSetXml } from "@/lib/seo/sitemapXml";
 
 export async function GET() {
-  const xml = buildUrlSetXml(getBlogSitemapEntries());
+  const entries = getProgrammaticSitemapEntries();
+  const xml = buildUrlSetXml(entries);
 
   return new Response(xml, {
     headers: {

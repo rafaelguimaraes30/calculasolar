@@ -2,8 +2,12 @@ import { Footer } from "@/components/home/Footer";
 import { Navbar } from "@/components/home/Navbar";
 import { MunicipioSeoContent } from "@/components/municipio/MunicipioSeoContent";
 import { JsonLd } from "@/components/seo/JsonLd";
+import {
+  buildBreadcrumbJsonLd,
+  buildMunicipioArticleJsonLd,
+} from "@/lib/seo/jsonLd";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import { SITE_NAME, SITE_URL } from "@/lib/seo/site";
+import { SITE_URL } from "@/lib/seo/site";
 import {
   calculateMunicipioSolarPreview,
   formatMunicipioPreview,
@@ -61,42 +65,21 @@ export default async function MunicipioSolarPage({ params }: PageProps) {
   const fmt = formatMunicipioPreview(preview);
   const pageUrl = `${SITE_URL}/energia-solar-em/${slug}`;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: `Energia Solar em ${municipio.nome}`,
-    description: `Potencial solar em ${municipio.nome}-${municipio.uf}. Geração estimada de ${fmt.geracaoAnual} com 5 kWp.`,
-    url: pageUrl,
-    isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
-    about: {
-      "@type": "Place",
-      name: municipio.nome,
-      address: {
-        "@type": "PostalAddress",
-        addressRegion: municipio.uf,
-        addressCountry: "BR",
-      },
-      geo: {
-        "@type": "GeoCoordinates",
-        latitude: municipio.latitude,
-        longitude: municipio.longitude,
-      },
-    },
-  };
+  const description = `Potencial solar em ${municipio.nome}-${municipio.uf}. Geração estimada de ${fmt.geracaoAnual} com 5 kWp.`;
 
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Início", item: SITE_URL },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: `Energia Solar em ${municipio.nome}`,
-        item: pageUrl,
-      },
-    ],
-  };
+  const jsonLd = buildMunicipioArticleJsonLd({
+    nome: municipio.nome,
+    uf: municipio.uf,
+    pageUrl,
+    description,
+    latitude: municipio.latitude,
+    longitude: municipio.longitude,
+  });
+
+  const breadcrumbLd = buildBreadcrumbJsonLd([
+    { name: "Início", item: SITE_URL },
+    { name: `Energia Solar em ${municipio.nome}`, item: pageUrl },
+  ]);
 
   return (
     <>

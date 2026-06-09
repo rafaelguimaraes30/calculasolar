@@ -35,7 +35,12 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
     title,
     description: input.description,
     keywords: input.keywords,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      types: {
+        "application/rss+xml": [{ url: "/feed.xml", title: `RSS ${SITE_NAME}` }],
+      },
+    },
     openGraph: {
       title,
       description: input.description,

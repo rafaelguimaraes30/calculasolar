@@ -91,7 +91,49 @@ export function MunicipioSeoContent({ municipio }: MunicipioSeoContentProps) {
                 ))}
               </div>
 
-              <div className="mt-10 rounded-2xl border border-solar-500/20 bg-solar-500/8 p-8 text-center">
+              <nav
+                aria-label="Links relacionados"
+                className="mt-10 rounded-2xl border border-navy-800/10 bg-white p-6"
+              >
+                <h2 className="text-sm font-bold uppercase tracking-wider text-navy-900">
+                  Explore o CalculaSolar
+                </h2>
+                <ul className="mt-4 flex flex-wrap gap-4 text-sm">
+                  <li>
+                    <Link href="/" className="font-medium text-solar-600 hover:text-solar-600/80">
+                      Página inicial
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/simulador" className="font-medium text-solar-600 hover:text-solar-600/80">
+                      Simulador
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/blog" className="font-medium text-solar-600 hover:text-solar-600/80">
+                      Blog
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/ultimas-noticias"
+                      className="font-medium text-solar-600 hover:text-solar-600/80"
+                    >
+                      Últimas notícias
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/blog/como-funciona-energia-solar-economia-conta-luz"
+                      className="font-medium text-solar-600 hover:text-solar-600/80"
+                    >
+                      Economia na conta de luz
+                    </Link>
+                  </li>
+                </ul>
+              </nav>
+
+              <div className="mt-8 rounded-2xl border border-solar-500/20 bg-solar-500/8 p-8 text-center">
                 <p className="text-lg font-bold text-navy-900">
                   Simule para {municipio.nome}
                 </p>
