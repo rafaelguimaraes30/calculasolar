@@ -7,7 +7,7 @@ import {
   subscribeConsent,
   type ConsentStatus,
 } from "@/lib/analytics/consent";
-import { GA_MEASUREMENT_ID } from "@/lib/analytics/ga";
+import { GA_MEASUREMENT_ID, isGaConfigured } from "@/lib/analytics/ga";
 import Script from "next/script";
 import {
   createContext,
@@ -72,7 +72,7 @@ export function AnalyticsProvider({ children }: AnalyticsProviderProps) {
   }, []);
 
   const showBanner = isClient && consent === null;
-  const analyticsEnabled = consent === "accepted";
+  const analyticsEnabled = consent === "accepted" && isGaConfigured();
 
   return (
     <ConsentContext.Provider value={{ consent, reopenConsentBanner }}>

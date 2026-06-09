@@ -1,6 +1,12 @@
-export const GA_MEASUREMENT_ID = "G-8GNZ4NKKCC";
+export const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "";
+
+export function isGaConfigured(): boolean {
+  return GA_MEASUREMENT_ID.length > 0;
+}
 
 export function initGoogleAnalytics(): void {
+  if (!isGaConfigured()) return;
   if (typeof window === "undefined" || typeof window.gtag !== "function") return;
 
   window.gtag("js", new Date());
@@ -14,6 +20,7 @@ export function initGoogleAnalytics(): void {
 }
 
 export function trackPageView(pagePath: string): void {
+  if (!isGaConfigured()) return;
   if (typeof window === "undefined" || typeof window.gtag !== "function") return;
 
   window.gtag("config", GA_MEASUREMENT_ID, {
