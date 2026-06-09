@@ -4,6 +4,7 @@ import { SimuladorClient } from "@/components/simulador/SimuladorClient";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/seo/Breadcrumbs";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { toMunicipioSlug } from "@/lib/seo/slug";
+import { isMunicipioPageExcluded } from "@/lib/solar/municipiosData";
 
 interface PageProps {
   searchParams: Promise<{
@@ -29,9 +30,12 @@ export default async function SimuladorPage({ searchParams }: PageProps) {
 
   const breadcrumbItems: BreadcrumbItem[] = [{ label: "Início", href: "/" }];
   if (cidade && estado) {
+    const municipioSlug = toMunicipioSlug(cidade, estado);
     breadcrumbItems.push({
       label: `Energia Solar em ${cidade}`,
-      href: `/energia-solar-em/${toMunicipioSlug(cidade, estado)}`,
+      href: isMunicipioPageExcluded(municipioSlug)
+        ? undefined
+        : `/energia-solar-em/${municipioSlug}`,
     });
   }
   breadcrumbItems.push({ label: "Simulador" });

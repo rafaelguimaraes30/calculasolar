@@ -11,6 +11,7 @@ import {
 import {
   findMunicipioBySlug,
   getPriorityMunicipioSlugs,
+  isMunicipioPageExcluded,
 } from "@/lib/solar/municipiosData";
 import { notFound } from "next/navigation";
 
@@ -28,6 +29,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
+  if (isMunicipioPageExcluded(slug)) return {};
   const municipio = findMunicipioBySlug(slug);
   if (!municipio) return {};
 
@@ -51,6 +53,7 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function MunicipioSolarPage({ params }: PageProps) {
   const { slug } = await params;
+  if (isMunicipioPageExcluded(slug)) notFound();
   const municipio = findMunicipioBySlug(slug);
   if (!municipio) notFound();
 

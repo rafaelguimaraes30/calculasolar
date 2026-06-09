@@ -55,13 +55,23 @@ export const CODIGO_TO_UF: Record<number, string> = Object.fromEntries(
   Object.entries(UF_TO_CODIGO).map(([uf, codigo]) => [codigo, uf]),
 ) as Record<number, string>;
 
-/** Capitais e cidades em destaque para geração estática / SEO */
-export const FEATURED_MUNICIPIO_SLUGS = [
+/** Municípios sem página pública /energia-solar-em (excluídos de build, sitemap e blog) */
+export const EXCLUDED_MUNICIPIO_SLUGS = [
   "goiania-go",
-  "campinas-sp",
   "curitiba-pr",
   "campo-grande-ms",
   "belo-horizonte-mg",
+] as const;
+
+const excludedMunicipioSlugSet = new Set<string>(EXCLUDED_MUNICIPIO_SLUGS);
+
+export function isMunicipioPageExcluded(slug: string): boolean {
+  return excludedMunicipioSlugSet.has(slug);
+}
+
+/** Capitais e cidades em destaque para geração estática / SEO */
+export const FEATURED_MUNICIPIO_SLUGS = [
+  "campinas-sp",
   "sao-paulo-sp",
   "rio-de-janeiro-rj",
   "brasilia-df",
@@ -262,7 +272,7 @@ export function getPriorityMunicipioSlugs(): string[] {
     }
   }
 
-  return [...slugs];
+  return [...slugs].filter((slug) => !isMunicipioPageExcluded(slug));
 }
 
 /** @deprecated Use getPriorityMunicipioSlugs */
@@ -277,7 +287,7 @@ export function getAllMunicipioSlugs(): string[] {
       const uf = CODIGO_TO_UF[m.codigo_uf];
       return uf ? toMunicipioSlug(m.nome, uf) : null;
     })
-    .filter((s): s is string => s !== null);
+    .filter((s): s is string => s !== null && !isMunicipioPageExcluded(s));
 }
 
 export function lookupMunicipio(cidade: string, estado: string): MunicipioLookupResult {

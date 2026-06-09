@@ -1,9 +1,7 @@
-import { toMunicipioSlug } from "@/lib/seo/slug";
 import { calculateMunicipioSolarPreview, formatMunicipioPreview } from "@/lib/solar/municipioPreview";
 import { DEFAULT_MODULE_ID, getModuleById } from "@/lib/solar/modulesData";
 import { calculateSolarSimulation } from "@/lib/solar/calculate";
-import { PERFORMANCE_RATIO } from "@/lib/solar/constants";
-import { formatDecimal, formatInteger } from "@/lib/solar/format";
+import { formatInteger } from "@/lib/solar/format";
 
 export interface BlogArticle {
   slug: string;
@@ -36,39 +34,128 @@ function sistema5KwpSimulation() {
   return { preview, fmt };
 }
 
-function cidadeArticle(cidade: string, uf: string): BlogArticle {
-  const preview = calculateMunicipioSolarPreview(cidade, uf);
-  const fmt = formatMunicipioPreview(preview);
-  const slug = `energia-solar-em-${toMunicipioSlug(cidade, uf)}`;
-
-  return {
-    slug,
-    title: `Energia Solar em ${cidade}`,
-    description: `Descubra o potencial de energia solar em ${cidade}-${uf}. Geração estimada e economia anual com sistema de 5 kWp.`,
-    keywords: ["energia solar", cidade, uf, "painéis solares", "fotovoltaico"],
-    category: "cidade",
-    sections: [
-      {
-        paragraphs: [
-          `${cidade} possui excelente potencial para sistemas fotovoltaicos residenciais e comerciais.`,
-          `Um sistema residencial de 5 kWp, com telhado voltado ao Norte e inclinação ideal de ${formatDecimal(preview.tiltIdeal, 1)}°, pode gerar cerca de ${fmt.geracaoAnual} por ano.`,
-        ],
-      },
-      {
-        heading: "Economia estimada",
-        paragraphs: [
-          `Com tarifa média regional, a economia anual estimada é de ${fmt.economiaAnual}, considerando PR de ${PERFORMANCE_RATIO}.`,
-          `Use nosso simulador gratuito para dimensionar o sistema ideal para o seu consumo em ${cidade}-${uf}.`,
-        ],
-      },
-    ],
-  };
-}
-
 const painel550 = painel550Simulation();
 const sistema5 = sistema5KwpSimulation();
 
 export const BLOG_ARTICLES: BlogArticle[] = [
+  {
+    slug: "energia-solar-vale-a-pena-2026",
+    title: "Energia solar vale a pena em 2026?",
+    description:
+      "Descubra se energia solar vale a pena em 2026: payback, economia na conta de luz, evolução dos módulos e retorno do investimento no Brasil.",
+    keywords: [
+      "energia solar vale a pena",
+      "energia solar 2026",
+      "painéis solares",
+      "economia conta de luz",
+      "investimento solar",
+    ],
+    category: "guia",
+    sections: [
+      {
+        paragraphs: [
+          "A energia solar continua sendo uma das formas mais eficientes de reduzir o custo da conta de luz no Brasil em 2026. Com o aumento constante das tarifas de energia elétrica, sistemas fotovoltaicos se tornaram ainda mais atrativos para residências e empresas.",
+        ],
+      },
+      {
+        heading: "Retorno do investimento",
+        paragraphs: [
+          "Em média, o retorno do investimento ocorre entre 3 e 6 anos, dependendo da região e do consumo energético. Após esse período, a economia gerada pode ultrapassar 90% na conta de energia.",
+        ],
+      },
+      {
+        heading: "Evolução da tecnologia",
+        paragraphs: [
+          "Além disso, a tecnologia dos módulos solares evoluiu significativamente, aumentando a eficiência e reduzindo o custo por watt instalado.",
+        ],
+      },
+      {
+        heading: "Conclusão",
+        paragraphs: [
+          "Sim, energia solar vale a pena em 2026, principalmente para quem busca redução de custos a longo prazo e independência energética.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "quanto-gera-placa-solar-550w",
+    title: "Quanto gera uma placa solar de 550W?",
+    description:
+      "Saiba quanto gera uma placa solar de 550W por dia e por mês no Brasil, com exemplos práticos para sistemas residenciais.",
+    keywords: [
+      "placa solar 550W",
+      "geração painel solar",
+      "kWh painel fotovoltaico",
+      "módulo 550 watts",
+    ],
+    category: "equipamento",
+    sections: [
+      {
+        paragraphs: [
+          "Uma placa solar de 550W pode gerar, em média, entre 2,2 kWh e 3,0 kWh por dia, dependendo da irradiação solar da região, inclinação e condições climáticas.",
+        ],
+      },
+      {
+        heading: "Geração mensal no Brasil",
+        paragraphs: [
+          "No Brasil, que possui alta incidência solar, um sistema com esse tipo de módulo pode gerar aproximadamente 80 kWh a 100 kWh por mês por painel.",
+          "Isso significa que, em um sistema residencial com 10 painéis de 550W, a geração mensal pode ultrapassar 800 kWh.",
+        ],
+      },
+      {
+        heading: "Conclusão",
+        paragraphs: [
+          "A placa de 550W é atualmente uma das mais eficientes para sistemas residenciais, oferecendo ótimo equilíbrio entre custo e geração.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "diferenca-kwh-kwp",
+    title: "Diferença entre kWh e kWp",
+    description:
+      "Entenda a diferença entre kWh e kWp em energia solar: consumo, geração e potência do sistema fotovoltaico explicados de forma simples.",
+    keywords: [
+      "kWh kWp diferença",
+      "quilowatt hora",
+      "quilowatt pico",
+      "energia solar",
+      "dimensionamento fotovoltaico",
+    ],
+    category: "guia",
+    sections: [
+      {
+        paragraphs: [
+          "Uma das dúvidas mais comuns em energia solar é a diferença entre kWh e kWp.",
+        ],
+      },
+      {
+        heading: "O que é kWh?",
+        paragraphs: [
+          "kWh (quilowatt-hora): representa o consumo ou geração de energia ao longo do tempo. É o que aparece na sua conta de luz.",
+        ],
+      },
+      {
+        heading: "O que é kWp?",
+        paragraphs: [
+          "kWp (quilowatt-pico): representa a potência máxima que um sistema fotovoltaico pode gerar em condições ideais.",
+        ],
+      },
+      {
+        heading: "Capacidade vs. energia produzida",
+        paragraphs: [
+          "Em outras palavras, kWp é a capacidade do sistema, enquanto kWh é a energia realmente consumida ou produzida.",
+          "Por exemplo, um sistema de 5 kWp pode gerar cerca de 500 a 700 kWh por mês, dependendo da localização.",
+        ],
+      },
+      {
+        heading: "Conclusão",
+        paragraphs: [
+          "Entender essa diferença é essencial para dimensionar corretamente um sistema solar.",
+        ],
+      },
+    ],
+  },
   {
     slug: "como-funciona-energia-solar-economia-conta-luz",
     title: "Como funciona a energia solar e quanto você pode economizar na conta de luz",
@@ -236,10 +323,6 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       },
     ],
   },
-  cidadeArticle("Goiânia", "GO"),
-  cidadeArticle("Curitiba", "PR"),
-  cidadeArticle("Campo Grande", "MS"),
-  cidadeArticle("Belo Horizonte", "MG"),
 ];
 
 export function getBlogArticle(slug: string): BlogArticle | undefined {
