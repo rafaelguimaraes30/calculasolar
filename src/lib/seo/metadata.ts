@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { SITE_DESCRIPTION, SITE_LOCALE, SITE_NAME, SITE_URL } from "./site";
+import {
+  SITE_DESCRIPTION,
+  SITE_LOCALE,
+  SITE_NAME,
+  SITE_OG_IMAGE,
+  SITE_OG_IMAGE_ALT,
+  SITE_URL,
+} from "./site";
 
 export interface PageSeoInput {
   title: string;
@@ -15,6 +22,15 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
     ? input.title
     : `${input.title} | ${SITE_NAME}`;
 
+  const ogImages = [
+    {
+      url: SITE_OG_IMAGE,
+      width: 1200,
+      height: 630,
+      alt: SITE_OG_IMAGE_ALT,
+    },
+  ];
+
   return {
     title,
     description: input.description,
@@ -27,11 +43,13 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
       siteName: SITE_NAME,
       locale: SITE_LOCALE,
       type: input.type ?? "website",
+      images: ogImages,
     },
     twitter: {
       card: "summary_large_image",
       title,
       description: input.description,
+      images: [SITE_OG_IMAGE],
     },
     robots: { index: true, follow: true },
   };

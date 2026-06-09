@@ -1,4 +1,4 @@
-import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
 import { defaultSiteMetadata } from "@/lib/seo/metadata";
 import { SITE_URL } from "@/lib/seo/site";
 import type { Metadata } from "next";
@@ -8,7 +8,7 @@ import "./globals.css";
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -24,8 +24,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${plusJakarta.variable} scroll-smooth`}>
       <body className="min-h-screen antialiased">
-        <GoogleAnalytics />
-        {children}
+        <AnalyticsProvider>{children}</AnalyticsProvider>
       </body>
     </html>
   );

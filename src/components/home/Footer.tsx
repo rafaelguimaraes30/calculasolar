@@ -1,3 +1,4 @@
+import { CookiePreferencesLink } from "@/components/analytics/CookiePreferencesLink";
 import { Mail, MapPin, Sun } from "lucide-react";
 import Link from "next/link";
 
@@ -15,6 +16,7 @@ const footerLinks = {
   Legal: [
     { label: "Privacidade", href: "#" },
     { label: "Termos de uso", href: "#" },
+    { label: "cookies", href: "" },
   ],
 };
 
@@ -55,12 +57,16 @@ export function Footer() {
               <ul className="mt-4 space-y-3">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-navy-700/65 transition-colors hover:text-solar-600"
-                    >
-                      {link.label}
-                    </a>
+                    {link.label === "cookies" ? (
+                      <CookiePreferencesLink />
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-sm text-navy-700/65 transition-colors hover:text-solar-600"
+                      >
+                        {link.label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

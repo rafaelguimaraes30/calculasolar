@@ -9,9 +9,9 @@ import {
   capitalizeWords,
 } from "@/lib/solar/format";
 import { AdSlot } from "@/components/ads/AdSlot";
+import dynamic from "next/dynamic";
 import { CalculationParamsCard } from "./CalculationParamsCard";
 import { FinancialResultsCard } from "./FinancialResultsCard";
-import { GenerationSeasonChart } from "./GenerationSeasonChart";
 import type { SimulationResult } from "@/types/solar";
 import {
   Calendar,
@@ -25,6 +25,21 @@ import {
   Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+const GenerationSeasonChart = dynamic(
+  () =>
+    import("./GenerationSeasonChart").then((m) => ({
+      default: m.GenerationSeasonChart,
+    })),
+  {
+    loading: () => (
+      <div className="flex h-64 items-center justify-center border-t border-white/10 p-6">
+        <Loader2 className="h-6 w-6 animate-spin text-solar-400" />
+      </div>
+    ),
+    ssr: false,
+  },
+);
 
 interface ResultsProps {
   result: SimulationResult | null;

@@ -4,7 +4,7 @@ import { Footer } from "@/components/home/Footer";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Navbar } from "@/components/home/Navbar";
-import { SolarSimulation } from "@/components/home/SolarSimulation";
+import { SimuladorClient } from "@/components/simulador/SimuladorClient";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_NAME, SITE_URL } from "@/lib/seo/site";
 
@@ -31,7 +31,7 @@ export default function Home() {
         <Benefits />
         <AdSlot position="inline-content" className="mx-auto max-w-7xl px-4 h-20 sm:h-24" />
         <HowItWorks />
-        <SolarSimulation />
+        <SimuladorClient initial={{}} />
       </main>
       <Footer />
     </>
