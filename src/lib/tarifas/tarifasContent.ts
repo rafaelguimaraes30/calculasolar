@@ -28,7 +28,7 @@ export const TARIFA_COMPOSITION_SECTION = {
 };
 
 export const TARIFA_SOLAR_SECTION = {
-  heading: "Energia Solar pode reduzir essa tarifa?",
+  heading: "Energia Solar pode reduzir a conta de luz?",
   paragraphs: [
     "Sim. Com a geração distribuída, você produz energia no próprio imóvel e injeta o excedente na rede, gerando créditos que abatem o consumo nas faturas seguintes.",
     "Na prática, isso reduz o impacto dos componentes da conta de luz, especialmente para consumidores residenciais e comerciais com bom potencial solar.",

@@ -15,15 +15,14 @@ import { SITE_URL } from "@/lib/seo/site";
 import { getTarifaRanking } from "@/lib/tarifas/tarifasSeoData";
 
 export const metadata = buildPageMetadata({
-  title: "Ranking Nacional de Tarifas de Energia",
+  title: "Concessionárias de Energia por Região",
   description:
-    "Consulte concessionárias de energia elétrica do Brasil por região. Valores de referência de TE, TUSD e componentes tarifários.",
+    "Conheça as concessionárias de energia elétrica do Brasil organizadas por região.",
   path: "/ranking-tarifas",
   keywords: [
-    "ranking tarifas",
-    "tarifa energia brasil",
-    "concessionárias",
-    "TE TUSD",
+    "concessionárias energia",
+    "distribuidoras brasil",
+    "energia elétrica",
   ],
 });
 
@@ -58,13 +57,13 @@ export default function RankingTarifasPage() {
               className="mb-6"
               items={[
                 { label: "Início", href: "/" },
-                { label: "Tarifas", href: "/tarifas" },
-                { label: "Ranking Nacional" },
+                { label: "Concessionárias", href: "/tarifas" },
+                { label: "Por região" },
               ]}
             />
 
             <h1 className="text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">
-              Ranking Nacional de Tarifas de Energia
+              Concessionárias de Energia por Região
             </h1>
             <p className="mt-4 text-lg text-navy-700/70">
               Concessionárias de energia elétrica no Brasil, organizadas por

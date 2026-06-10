@@ -102,9 +102,13 @@ function parseRaw(key: string, raw: unknown): TarifaConcessionariaRecord | null 
 }
 
 function buildTarifaPages(): TarifaPageData[] {
-  const byDistribuidora = new Map<
+  const bySlug = new Map<
     string,
-    { records: TarifaConcessionariaRecord[]; keys: string[] }
+    {
+      distribuidora: string;
+      records: TarifaConcessionariaRecord[];
+      keys: string[];
+    }
   >();
 
   for (const [key, raw] of Object.entries(
@@ -113,21 +117,21 @@ function buildTarifaPages(): TarifaPageData[] {
     const record = parseRaw(key, raw);
     if (!record) continue;
 
-    const normalizedName = record.distribuidora.trim();
-    const bucket = byDistribuidora.get(normalizedName) ?? {
+    const slug = toTarifaSlug(record.distribuidora);
+    const bucket = bySlug.get(slug) ?? {
+      distribuidora: record.distribuidora.trim(),
       records: [],
       keys: [],
     };
     bucket.records.push(record);
     bucket.keys.push(key);
-    byDistribuidora.set(normalizedName, bucket);
+    bySlug.set(slug, bucket);
   }
 
   const pages: TarifaPageData[] = [];
 
-  for (const [distribuidora, bucket] of byDistribuidora) {
+  for (const [slug, bucket] of bySlug) {
     const primary = pickPrimaryRecord(bucket.records);
-    const slug = toTarifaSlug(distribuidora);
     const variants = bucket.records.map((r, i) => ({
       key: bucket.keys[i],
       subgrupo: r.subgrupo,
@@ -138,7 +142,7 @@ function buildTarifaPages(): TarifaPageData[] {
     const sourceKeyIndex = bucket.records.indexOf(primary);
     pages.push({
       slug,
-      distribuidora,
+      distribuidora: bucket.distribuidora,
       uf: primary.uf,
       regiao: primary.regiao,
       sourceKey: bucket.keys[sourceKeyIndex >= 0 ? sourceKeyIndex : 0],

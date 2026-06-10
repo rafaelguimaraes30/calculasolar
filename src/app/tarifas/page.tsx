@@ -15,15 +15,14 @@ import { SITE_URL } from "@/lib/seo/site";
 import { getAllTarifaPages } from "@/lib/tarifas/tarifasSeoData";
 
 export const metadata = buildPageMetadata({
-  title: "Tarifas de Energia Elétrica no Brasil",
+  title: "Concessionárias de Energia do Brasil",
   description:
-    "Consulte tarifas de energia elétrica por concessionária, UF e região. Valores de referência de TE, TUSD, ICMS e PIS/COFINS.",
+    "Conheça as concessionárias de energia elétrica brasileiras e acesse informações institucionais sobre cada distribuidora.",
   path: "/tarifas",
   keywords: [
-    "tarifas de energia",
-    "concessionárias",
-    "TE TUSD",
-    "tarifa elétrica",
+    "concessionárias de energia",
+    "distribuidoras",
+    "energia elétrica",
     "ANEEL",
   ],
 });
@@ -59,15 +58,15 @@ export default function TarifasIndexPage() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <Breadcrumbs
               className="mb-6"
-              items={[{ label: "Início", href: "/" }, { label: "Tarifas" }]}
+              items={[{ label: "Início", href: "/" }, { label: "Concessionárias" }]}
             />
             <h1 className="text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">
-              Tarifas de Energia Elétrica no Brasil
+              Concessionárias de Energia Elétrica do Brasil
             </h1>
             <p className="mt-4 max-w-3xl text-lg text-navy-700/70">
               Consulte as concessionárias de energia elétrica do Brasil. Filtre
-              por UF, região ou nome e acesse informações institucionais de cada
-              distribuidora.
+              por UF, região ou nome e acesse informações institucionais sobre
+              cada distribuidora.
             </p>
 
             <div className="mt-8">

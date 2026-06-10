@@ -54,7 +54,7 @@ export function TarifaInternalLinks({ uf }: TarifaInternalLinksProps) {
         </li>
         <li>
           <Link href="/tarifas" className="font-medium text-solar-600 hover:text-solar-600/80">
-            Tarifas
+            Concessionárias
           </Link>
         </li>
         {uf && (
@@ -63,7 +63,7 @@ export function TarifaInternalLinks({ uf }: TarifaInternalLinksProps) {
               href={`/tarifas/${uf.toLowerCase()}`}
               className="font-medium text-solar-600 hover:text-solar-600/80"
             >
-              Tarifas em {uf}
+              Concessionárias em {uf}
             </Link>
           </li>
         )}
@@ -72,7 +72,7 @@ export function TarifaInternalLinks({ uf }: TarifaInternalLinksProps) {
             href="/ranking-tarifas"
             className="font-medium text-solar-600 hover:text-solar-600/80"
           >
-            Ranking nacional
+            Concessionárias por região
           </Link>
         </li>
       </ul>

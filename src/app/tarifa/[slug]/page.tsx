@@ -39,16 +39,14 @@ export async function generateMetadata({ params }: PageProps) {
   if (!page) return {};
 
   return buildPageMetadata({
-    title: `Tarifa da ${page.distribuidora} (${page.uf})`,
-    description: `Confira os componentes tarifários da ${page.distribuidora} em ${page.uf}. Valores de referência de TE, TUSD, ICMS e PIS/COFINS.`,
+    title: `${page.distribuidora} (${page.uf})`,
+    description: `Informações institucionais da concessionária ${page.distribuidora} em ${page.uf}.`,
     path: `/tarifa/${slug}`,
     keywords: [
-      "tarifa energia",
+      "concessionária energia",
       page.distribuidora,
       page.uf,
-      "TE",
-      "TUSD",
-      "concessionária",
+      "distribuidora",
     ],
     type: "article",
   });
@@ -60,13 +58,14 @@ export default async function TarifaDetailPage({ params }: PageProps) {
   if (!page) notFound();
 
   const pageUrl = `${SITE_URL}/tarifa/${slug}`;
-  const title = `Tarifa da ${page.distribuidora} (${page.uf})`;
+  const title = `${page.distribuidora} (${page.uf})`;
+  const jsonLdTitle = `Tarifa da ${page.distribuidora} (${page.uf})`;
 
   return (
     <>
       <JsonLd
         data={buildTarifaArticleJsonLd({
-          title,
+          title: jsonLdTitle,
           description: `Tarifa de energia elétrica da ${page.distribuidora} em ${page.uf}.`,
           url: pageUrl,
         })}
@@ -93,7 +92,7 @@ export default async function TarifaDetailPage({ params }: PageProps) {
               className="mb-6"
               items={[
                 { label: "Início", href: "/" },
-                { label: "Tarifas", href: "/tarifas" },
+                { label: "Concessionárias", href: "/tarifas" },
                 { label: page.uf, href: `/tarifas/${page.uf.toLowerCase()}` },
                 { label: page.distribuidora },
               ]}

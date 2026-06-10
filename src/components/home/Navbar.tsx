@@ -2,6 +2,7 @@
 
 import { Menu, Sun, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const links = [
@@ -10,27 +11,32 @@ const links = [
   { href: "#simulador", label: "Simulador" },
   { href: "#resultados", label: "Resultados" },
   { href: "/blog", label: "Blog" },
-  { href: "/tarifas", label: "Tarifas" },
+  { href: "/tarifas", label: "Concessionárias" },
   { href: "/ultimas-noticias", label: "Notícias" },
 ];
 
 export function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const headerBackground = isHome
+    ? scrolled
+      ? "bg-navy-900/90 shadow-lg shadow-navy-950/20 backdrop-blur-xl"
+      : "bg-navy-900/80 backdrop-blur-md"
+    : "bg-navy-900/90 shadow-lg shadow-navy-950/20 backdrop-blur-md";
+
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-navy-900/90 shadow-lg shadow-navy-950/20 backdrop-blur-xl"
-          : "bg-transparent"
-      }`}
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${headerBackground}`}
     >
       <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex items-center gap-2.5">

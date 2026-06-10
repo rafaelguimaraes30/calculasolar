@@ -36,10 +36,10 @@ export async function generateMetadata({ params }: PageProps) {
 
   const label = getUfLabel(uf);
   return buildPageMetadata({
-    title: `Tarifas de Energia em ${label}`,
-    description: `Confira os componentes tarifários das concessionárias de ${label}. Valores de referência de TE, TUSD, ICMS e PIS/COFINS.`,
+    title: `Concessionárias de Energia em ${label}`,
+    description: `Conheça as concessionárias de energia elétrica de ${label} e acesse informações institucionais sobre cada distribuidora.`,
     path: `/tarifas/${toUfSlug(uf)}`,
-    keywords: ["tarifas energia", label, uf, "concessionárias"],
+    keywords: ["concessionárias energia", label, uf, "distribuidoras"],
   });
 }
 
@@ -81,13 +81,13 @@ export default async function TarifasUfPage({ params }: PageProps) {
               className="mb-6"
               items={[
                 { label: "Início", href: "/" },
-                { label: "Tarifas", href: "/tarifas" },
+                { label: "Concessionárias", href: "/tarifas" },
                 { label: label },
               ]}
             />
 
             <h1 className="text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">
-              Tarifas de Energia em {label}
+              Concessionárias de Energia em {label}
             </h1>
             <p className="mt-4 text-lg text-navy-700/70">
               {stats.count} concessionária(s) cadastradas em {uf}.
