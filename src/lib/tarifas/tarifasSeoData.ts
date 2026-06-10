@@ -6,19 +6,10 @@ import tarifasJson from "@/lib/solar/data/tarifas_cursor_json/tarifas_cursor.jso
 import type { TarifaConcessionariaRecord } from "@/lib/solar/tarifasCursorData";
 import { toTarifaSlug, toUfSlug } from "./tarifasSlug";
 
-/** Dados exibidos nas páginas SEO — apenas componentes tarifários da base. */
+/** Dados institucionais exibidos nas páginas SEO — sem valores monetários. */
 export type TarifaSeoRecord = Pick<
   TarifaConcessionariaRecord,
-  | "distribuidora"
-  | "uf"
-  | "regiao"
-  | "subgrupo"
-  | "classe"
-  | "vigencia"
-  | "te_rs_kwh"
-  | "tusd_rs_kwh"
-  | "icms"
-  | "pis_cofins"
+  "distribuidora" | "uf" | "regiao" | "subgrupo" | "classe" | "vigencia"
 >;
 
 export interface TarifaVariantRef {
@@ -62,10 +53,9 @@ const FEATURED_DISTRIBUIDORAS = [
 
 function isUsable(record: TarifaConcessionariaRecord): boolean {
   return (
-    Number.isFinite(record.te_rs_kwh) &&
-    record.te_rs_kwh > 0 &&
-    Number.isFinite(record.tusd_rs_kwh) &&
-    record.tusd_rs_kwh > 0
+    record.distribuidora.trim().length > 0 &&
+    record.uf.trim().length === 2 &&
+    record.vigencia.trim().length > 0
   );
 }
 
@@ -77,10 +67,6 @@ function toSeoRecord(record: TarifaConcessionariaRecord): TarifaSeoRecord {
     subgrupo: record.subgrupo,
     classe: record.classe,
     vigencia: record.vigencia,
-    te_rs_kwh: record.te_rs_kwh,
-    tusd_rs_kwh: record.tusd_rs_kwh,
-    icms: record.icms,
-    pis_cofins: record.pis_cofins,
   };
 }
 
@@ -107,11 +93,7 @@ function parseRaw(key: string, raw: unknown): TarifaConcessionariaRecord | null 
     typeof r.regiao !== "string" ||
     typeof r.subgrupo !== "string" ||
     typeof r.classe !== "string" ||
-    typeof r.vigencia !== "string" ||
-    typeof r.te_rs_kwh !== "number" ||
-    typeof r.tusd_rs_kwh !== "number" ||
-    typeof r.icms !== "number" ||
-    typeof r.pis_cofins !== "number"
+    typeof r.vigencia !== "string"
   ) {
     return null;
   }
@@ -263,23 +245,6 @@ export function getFeaturedTarifaPages(limit = 8): TarifaPageData[] {
   }
 
   return featured;
-}
-
-export function formatTarifaRs(value: number): string {
-  return value.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 4,
-  });
-}
-
-export function formatTarifaRsKwh(value: number): string {
-  return `${formatTarifaRs(value)}/kWh`;
-}
-
-export function formatPercent(value: number): string {
-  return `${value.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%`;
 }
 
 /** Referências para futuras rotas /tarifa/[slug]/[variant] */

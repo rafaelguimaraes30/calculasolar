@@ -68,8 +68,7 @@ export default function RankingTarifasPage() {
             </h1>
             <p className="mt-4 text-lg text-navy-700/70">
               Concessionárias de energia elétrica no Brasil, organizadas por
-              região. Consulte os componentes tarifários de referência de cada
-              distribuidora.
+              região.
             </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">

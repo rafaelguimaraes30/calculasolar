@@ -65,9 +65,9 @@ export default function TarifasIndexPage() {
               Tarifas de Energia Elétrica no Brasil
             </h1>
             <p className="mt-4 max-w-3xl text-lg text-navy-700/70">
-              Consulte valores de referência das concessionárias de energia
-              elétrica. Filtre por UF, região ou nome e veja os componentes
-              tarifários TE e TUSD.
+              Consulte as concessionárias de energia elétrica do Brasil. Filtre
+              por UF, região ou nome e acesse informações institucionais de cada
+              distribuidora.
             </p>
 
             <div className="mt-8">

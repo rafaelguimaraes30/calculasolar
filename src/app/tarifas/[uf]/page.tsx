@@ -90,8 +90,7 @@ export default async function TarifasUfPage({ params }: PageProps) {
               Tarifas de Energia em {label}
             </h1>
             <p className="mt-4 text-lg text-navy-700/70">
-              {stats.count} concessionária(s) cadastradas em {uf}. Valores de
-              referência com componentes tarifários da base oficial.
+              {stats.count} concessionária(s) cadastradas em {uf}.
             </p>
 
             <div className="mt-8">

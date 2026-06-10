@@ -1,36 +1,28 @@
 export const TARIFA_COMPOSITION_SECTION = {
-  heading: "Como é composta a tarifa de energia elétrica?",
+  heading: "Como é composta a conta de energia elétrica",
   paragraphs: [
-    "A tarifa de energia elétrica no Brasil é formada por diversos componentes regulados pela ANEEL. Entender cada parte ajuda a interpretar a conta de luz e avaliar alternativas como a geração solar.",
+    "A conta de energia elétrica no Brasil é formada por diversos componentes regulados pela ANEEL. Entender cada parte ajuda a interpretar a fatura e avaliar alternativas como a geração solar.",
   ],
   items: [
     {
-      title: "TE (Tarifa de Energia)",
+      title: "Energia (TE)",
       text: "Remunera a energia elétrica propriamente dita, correspondente à produção nas usinas.",
     },
     {
-      title: "TUSD (Tarifa de Uso do Sistema de Distribuição)",
+      title: "Uso da rede (TUSD)",
       text: "Cobre o transporte e a distribuição da energia até a unidade consumidora.",
     },
     {
-      title: "ICMS",
-      text: "Imposto estadual incidente sobre o consumo de energia elétrica.",
+      title: "Tributos",
+      text: "Incluem ICMS, PIS e COFINS, incidentes sobre o consumo de energia elétrica.",
     },
     {
-      title: "PIS e COFINS",
-      text: "Contribuições federais aplicadas sobre a operação de energia.",
-    },
-    {
-      title: "Custos de distribuição e transmissão",
-      text: "Incluem manutenção de redes, subestações e encargos do sistema elétrico.",
-    },
-    {
-      title: "Encargos setoriais",
-      text: "Fundos e programas do setor elétrico repassados na fatura.",
+      title: "Encargos",
+      text: "Fundos e programas do setor elétrico, além dos custos de distribuição e transmissão.",
     },
     {
       title: "Bandeiras tarifárias",
-      text: "Sinalizam o custo da geração no período (verde, amarela ou vermelha) e podem alterar o valor final.",
+      text: "Sinalizam o custo da geração no período (verde, amarela ou vermelha) e podem influenciar a fatura.",
     },
   ],
 };
@@ -39,7 +31,7 @@ export const TARIFA_SOLAR_SECTION = {
   heading: "Energia Solar pode reduzir essa tarifa?",
   paragraphs: [
     "Sim. Com a geração distribuída, você produz energia no próprio imóvel e injeta o excedente na rede, gerando créditos que abatem o consumo nas faturas seguintes.",
-    "Na prática, isso reduz o impacto da tarifa final na conta de luz, especialmente para consumidores residenciais e comerciais com bom potencial solar.",
+    "Na prática, isso reduz o impacto dos componentes da conta de luz, especialmente para consumidores residenciais e comerciais com bom potencial solar.",
   ],
 };
 

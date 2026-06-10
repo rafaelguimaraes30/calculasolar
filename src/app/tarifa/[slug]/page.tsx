@@ -104,8 +104,8 @@ export default async function TarifaDetailPage({ params }: PageProps) {
                 {title}
               </h1>
               <p className="mt-4 text-lg text-navy-700/70">
-                Confira os componentes tarifários de referência da
-                concessionária: TE, TUSD, ICMS e PIS/COFINS.
+                Informações institucionais da concessionária de energia elétrica
+                na sua região.
               </p>
             </header>
 
@@ -148,7 +148,7 @@ export default async function TarifaDetailPage({ params }: PageProps) {
                 href="/simulador"
                 className="mt-5 inline-flex rounded-full bg-gradient-to-r from-solar-500 to-solar-400 px-8 py-3 text-sm font-bold text-navy-900 transition-all hover:scale-105"
               >
-                Simule sua economia
+                Simule sua economia com energia solar
               </Link>
             </section>
 

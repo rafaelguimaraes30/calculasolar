@@ -1,8 +1,4 @@
-import {
-  formatPercent,
-  formatTarifaRsKwh,
-  type TarifaPageData,
-} from "@/lib/tarifas/tarifasSeoData";
+import type { TarifaPageData } from "@/lib/tarifas/tarifasSeoData";
 import Link from "next/link";
 
 interface TarifaDataTableProps {
@@ -17,10 +13,6 @@ export function TarifaDataTable({ page }: TarifaDataTableProps) {
     ["Região", page.regiao],
     ["Classe", record.classe],
     ["Subgrupo", record.subgrupo],
-    ["TE", formatTarifaRsKwh(record.te_rs_kwh)],
-    ["TUSD", formatTarifaRsKwh(record.tusd_rs_kwh)],
-    ["ICMS", formatPercent(record.icms)],
-    ["PIS/COFINS", formatPercent(record.pis_cofins)],
     ["Vigência", record.vigencia],
   ];
 
@@ -66,8 +58,6 @@ export function TarifaListTable({ pages }: TarifaListTableProps) {
             <th className="px-4 py-3">Distribuidora</th>
             <th className="px-4 py-3">UF</th>
             <th className="px-4 py-3">Região</th>
-            <th className="px-4 py-3">Classe</th>
-            <th className="px-4 py-3">Subgrupo</th>
             <th className="px-4 py-3" />
           </tr>
         </thead>
@@ -79,8 +69,6 @@ export function TarifaListTable({ pages }: TarifaListTableProps) {
               </td>
               <td className="px-4 py-3">{page.uf}</td>
               <td className="px-4 py-3">{page.regiao}</td>
-              <td className="px-4 py-3">{page.record.classe}</td>
-              <td className="px-4 py-3">{page.record.subgrupo}</td>
               <td className="px-4 py-3">
                 <Link
                   href={`/tarifa/${page.slug}`}

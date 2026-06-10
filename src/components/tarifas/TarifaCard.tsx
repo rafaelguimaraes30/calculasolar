@@ -13,9 +13,6 @@ export function TarifaCard({ page }: TarifaCardProps) {
         <p className="mt-1 text-sm text-navy-700/60">
           {page.uf} · {page.regiao}
         </p>
-        <p className="mt-2 text-xs text-navy-700/50">
-          {page.record.subgrupo} · {page.record.classe}
-        </p>
       </div>
       <Link
         href={`/tarifa/${page.slug}`}
