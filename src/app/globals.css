@@ -77,6 +77,25 @@ body {
   }
 }
 
+@keyframes field-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-field-shake {
+  animation: field-shake 0.45s ease-in-out;
+}
+
 @keyframes shimmer {
   0% {
     background-position: -200% 0;

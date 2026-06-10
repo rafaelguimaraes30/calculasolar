@@ -16,7 +16,7 @@ export function RoofTiltSelector({
   error,
 }: RoofTiltSelectorProps) {
   return (
-    <div className="sm:col-span-2">
+    <div id="inclinacao" className="sm:col-span-2">
       <span className="mb-3 flex items-center gap-2 text-sm font-semibold text-navy-900">
         <Triangle className="h-4 w-4 text-solar-600" />
         Inclinação aproximada do telhado

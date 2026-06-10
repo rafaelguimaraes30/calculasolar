@@ -7,7 +7,11 @@ import {
   getTarifaByKey,
   resolveTarifaParaSimulacao,
 } from "@/lib/solar/tarifasCursorData";
-import { hasFormErrors, validateSimulationForm } from "@/lib/solar/validate";
+import {
+  hasFormErrors,
+  scrollToFirstFormError,
+  validateSimulationForm,
+} from "@/lib/solar/validate";
 import type {
   PropertyType,
   SimulationFormData,
@@ -212,6 +216,9 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
     setErrors(validationErrors);
 
     if (hasFormErrors(validationErrors)) {
+      requestAnimationFrame(() => {
+        scrollToFirstFormError(validationErrors, form);
+      });
       return false;
     }
 

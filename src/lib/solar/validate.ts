@@ -4,6 +4,30 @@ import { getModuleById } from "./modulesData";
 import { isValidRoofTiltChoice } from "./inclinacao";
 import { isValidOrientacao } from "./orientation";
 
+const FORM_FIELD_ORDER: (keyof SimulationFormData)[] = [
+  "cidade",
+  "estado",
+  "tarifaConcessionariaKey",
+  "tarifaManual",
+  "consumo",
+  "orientacao",
+  "inclinacao",
+  "moduloId",
+  "tipo",
+];
+
+const FIELD_ELEMENT_IDS: Partial<Record<keyof SimulationFormData, string>> = {
+  cidade: "cidade",
+  estado: "estado",
+  tarifaConcessionariaKey: "tarifa-concessionaria",
+  tarifaManual: "tarifa-manual",
+  consumo: "consumo",
+  orientacao: "orientacao",
+  inclinacao: "inclinacao",
+  moduloId: "moduloId",
+  tipo: "tipo",
+};
+
 export function validateSimulationForm(
   data: SimulationFormData,
 ): SimulationFormErrors {
@@ -11,7 +35,7 @@ export function validateSimulationForm(
 
   const cidade = data.cidade.trim();
   if (!cidade) {
-    errors.cidade = "Informe a cidade.";
+    errors.cidade = "Preencha a cidade antes de continuar.";
   } else if (cidade.length < 2) {
     errors.cidade = "Cidade deve ter pelo menos 2 caracteres.";
   } else if (cidade.length > 80) {
@@ -19,14 +43,19 @@ export function validateSimulationForm(
   }
 
   if (!data.estado) {
-    errors.estado = "Selecione o estado.";
+    errors.estado = "Selecione o estado antes de continuar.";
   } else if (!ESTADOS_BR.includes(data.estado as (typeof ESTADOS_BR)[number])) {
     errors.estado = "Estado inválido.";
   }
 
+  if (data.tarifaModo === "concessionaria" && !data.tarifaConcessionariaKey.trim()) {
+    errors.tarifaConcessionariaKey =
+      "Selecione a concessionária de energia antes de continuar.";
+  }
+
   const consumoStr = data.consumo.trim();
   if (!consumoStr) {
-    errors.consumo = "Informe o consumo mensal em kWh.";
+    errors.consumo = "Informe o consumo mensal antes de continuar.";
   } else {
     const consumo = Number(consumoStr);
     if (Number.isNaN(consumo)) {
@@ -79,4 +108,48 @@ export function validateSimulationForm(
 
 export function hasFormErrors(errors: SimulationFormErrors): boolean {
   return Object.keys(errors).length > 0;
+}
+
+export function getFirstValidationErrorField(
+  errors: SimulationFormErrors,
+  data: SimulationFormData,
+): keyof SimulationFormData | null {
+  for (const field of FORM_FIELD_ORDER) {
+    if (field === "tarifaConcessionariaKey" && data.tarifaModo !== "concessionaria") {
+      continue;
+    }
+    if (field === "tarifaManual" && data.tarifaModo !== "manual") {
+      continue;
+    }
+    if (errors[field]) return field;
+  }
+  return null;
+}
+
+export function scrollToFirstFormError(
+  errors: SimulationFormErrors,
+  data: SimulationFormData,
+): void {
+  const field = getFirstValidationErrorField(errors, data);
+  if (!field) return;
+
+  const elementId = FIELD_ELEMENT_IDS[field] ?? String(field);
+  const el = document.getElementById(elementId);
+  if (!el) {
+    document
+      .getElementById("simulador")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  el.classList.add("animate-field-shake");
+
+  const focusable = el.matches("input, select, textarea, button")
+    ? el
+    : el.querySelector<HTMLElement>("input, select, textarea, button");
+
+  focusable?.focus({ preventScroll: true });
+
+  window.setTimeout(() => el.classList.remove("animate-field-shake"), 500);
 }

@@ -173,11 +173,15 @@ export function Simulator({ simulator }: SimulatorProps) {
                   error={errors.moduloId}
                 />
 
-                <div className="sm:col-span-2">
+                <div id="tipo" className="sm:col-span-2">
                   <span className="mb-3 block text-sm font-semibold text-navy-900">
                     Tipo de imóvel
                   </span>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div
+                    className={`grid grid-cols-2 gap-3 rounded-xl ${
+                      errors.tipo ? "ring-2 ring-red-400/50" : ""
+                    }`}
+                  >
                     {(
                       [
                         { value: "residencial" as const, label: "Residencial", icon: Home },
