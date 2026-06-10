@@ -130,6 +130,40 @@ export function buildCollectionPageJsonLd(input: {
   };
 }
 
+export function buildFaqPageJsonLd(
+  items: { question: string; answer: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+}
+
+export function buildTarifaArticleJsonLd(input: {
+  title: string;
+  description: string;
+  url: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.title,
+    description: input.description,
+    url: input.url,
+    image: `${SITE_URL}${SITE_OG_IMAGE}`,
+    author: { "@type": "Organization", name: SITE_NAME },
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  };
+}
+
 export function buildMunicipioArticleJsonLd(input: {
   nome: string;
   uf: string;

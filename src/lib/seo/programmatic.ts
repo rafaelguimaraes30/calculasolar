@@ -27,10 +27,10 @@ export const PROGRAMMATIC_SEO_MODULES: ProgrammaticSeoModule[] = [
     getSlugs: () => [],
   },
   {
-    id: "tarifas",
-    basePath: "/tarifa-energia",
+    id: "tarifas-variantes",
+    basePath: "/tarifa",
     enabled: false,
-    sitemapPriority: 0.8,
+    sitemapPriority: 0.75,
     sitemapChangefreq: "monthly",
     getSlugs: () => [],
   },

@@ -5,6 +5,7 @@ import Link from "next/link";
 const footerLinks = {
   Produto: [
     { label: "Simulador", href: "/simulador" },
+    { label: "Tarifas", href: "/tarifas" },
     { label: "Como funciona", href: "/#como-funciona" },
     { label: "Benefícios", href: "/#beneficios" },
   ],

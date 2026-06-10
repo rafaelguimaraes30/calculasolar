@@ -5,6 +5,7 @@ import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Navbar } from "@/components/home/Navbar";
 import { RecentNews } from "@/components/home/RecentNews";
+import { TarifasHomeSection } from "@/components/tarifas/TarifasHomeSection";
 import { SimuladorClient } from "@/components/simulador/SimuladorClient";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/seo/jsonLd";
@@ -25,6 +26,7 @@ export default function Home() {
         <AdSlot position="inline-content" className="mx-auto max-w-7xl px-4 h-20 sm:h-24" />
         <HowItWorks />
         <SimuladorClient initial={{}} />
+        <TarifasHomeSection />
         <RecentNews />
       </main>
       <Footer />

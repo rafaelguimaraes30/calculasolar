@@ -1,3 +1,4 @@
+import { enrichTextWithTarifaLinks } from "@/lib/tarifas/tarifasBlogLinks";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -5,8 +6,11 @@ const LINK_PATTERN = /\[([^\]]+)\]\(([^)]+)\)/g;
 
 /** Converte parágrafos com links markdown [texto](url) em elementos React. */
 export function renderBlogParagraph(text: string): ReactNode {
-  if (!LINK_PATTERN.test(text)) return text;
+  const enriched = enrichTextWithTarifaLinks(text);
+  LINK_PATTERN.lastIndex = 0;
+  if (!LINK_PATTERN.test(enriched)) return enriched;
 
+  text = enriched;
   LINK_PATTERN.lastIndex = 0;
   const parts: ReactNode[] = [];
   let lastIndex = 0;

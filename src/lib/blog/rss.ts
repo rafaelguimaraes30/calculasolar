@@ -34,7 +34,7 @@ export function buildBlogRssXml(): string {
   <channel>
     <title>${escapeXml(`Blog ${SITE_NAME}`)}</title>
     <link>${SITE_URL}/blog</link>
-    <description>Artigos e notícias sobre energia solar no Brasil.</description>
+    <description>Artigos e notícias sobre energia solar no Brasil. Tarifas: ${SITE_URL}/tarifas</description>
     <language>pt-BR</language>
 ${items}
   </channel>

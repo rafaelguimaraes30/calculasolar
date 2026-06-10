@@ -7,6 +7,7 @@ import {
   formatMunicipioPreview,
 } from "@/lib/solar/municipioPreview";
 import type { MunicipioSearchResult } from "@/lib/solar/municipiosData";
+import { MunicipioTarifaBlock } from "@/components/tarifas/MunicipioTarifaBlock";
 import Link from "next/link";
 
 interface MunicipioSeoContentProps {
@@ -71,7 +72,9 @@ export function MunicipioSeoContent({ municipio }: MunicipioSeoContentProps) {
                 className="my-8 h-20 sm:h-24"
               />
 
-              <div className="space-y-8">
+              <MunicipioTarifaBlock uf={municipio.uf} cidade={municipio.nome} />
+
+              <div className="mt-8 space-y-8">
                 {sections.map((section, i) => (
                   <section key={i}>
                     {section.heading && (
