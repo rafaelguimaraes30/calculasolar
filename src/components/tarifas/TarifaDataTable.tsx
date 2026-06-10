@@ -19,13 +19,8 @@ export function TarifaDataTable({ page }: TarifaDataTableProps) {
     ["Subgrupo", record.subgrupo],
     ["TE", formatTarifaRsKwh(record.te_rs_kwh)],
     ["TUSD", formatTarifaRsKwh(record.tusd_rs_kwh)],
-    ["Tarifa Base", formatTarifaRsKwh(record.tarifa_base_rs_kwh)],
     ["ICMS", formatPercent(record.icms)],
     ["PIS/COFINS", formatPercent(record.pis_cofins)],
-    [
-      "Tarifa Estimada Final",
-      formatTarifaRsKwh(record.tarifa_estimada_final_rs_kwh),
-    ],
     ["Vigência", record.vigencia],
   ];
 
@@ -71,7 +66,8 @@ export function TarifaListTable({ pages }: TarifaListTableProps) {
             <th className="px-4 py-3">Distribuidora</th>
             <th className="px-4 py-3">UF</th>
             <th className="px-4 py-3">Região</th>
-            <th className="px-4 py-3">Tarifa estimada</th>
+            <th className="px-4 py-3">Classe</th>
+            <th className="px-4 py-3">Subgrupo</th>
             <th className="px-4 py-3" />
           </tr>
         </thead>
@@ -83,9 +79,8 @@ export function TarifaListTable({ pages }: TarifaListTableProps) {
               </td>
               <td className="px-4 py-3">{page.uf}</td>
               <td className="px-4 py-3">{page.regiao}</td>
-              <td className="px-4 py-3 font-semibold text-solar-600">
-                {formatTarifaRsKwh(page.record.tarifa_estimada_final_rs_kwh)}
-              </td>
+              <td className="px-4 py-3">{page.record.classe}</td>
+              <td className="px-4 py-3">{page.record.subgrupo}</td>
               <td className="px-4 py-3">
                 <Link
                   href={`/tarifa/${page.slug}`}

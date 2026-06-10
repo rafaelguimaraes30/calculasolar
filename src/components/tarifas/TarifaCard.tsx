@@ -1,7 +1,4 @@
-import {
-  formatTarifaRsKwh,
-  type TarifaPageData,
-} from "@/lib/tarifas/tarifasSeoData";
+import type { TarifaPageData } from "@/lib/tarifas/tarifasSeoData";
 import Link from "next/link";
 
 interface TarifaCardProps {
@@ -11,15 +8,13 @@ interface TarifaCardProps {
 export function TarifaCard({ page }: TarifaCardProps) {
   return (
     <article className="rounded-2xl border border-navy-800/10 bg-white p-6 shadow-sm transition-all hover:border-solar-500/30 hover:shadow-md">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-bold text-navy-900">{page.distribuidora}</h2>
-          <p className="mt-1 text-sm text-navy-700/60">
-            {page.uf} · {page.regiao}
-          </p>
-        </div>
-        <p className="text-lg font-bold text-solar-600">
-          {formatTarifaRsKwh(page.record.tarifa_estimada_final_rs_kwh)}
+      <div>
+        <h2 className="text-lg font-bold text-navy-900">{page.distribuidora}</h2>
+        <p className="mt-1 text-sm text-navy-700/60">
+          {page.uf} · {page.regiao}
+        </p>
+        <p className="mt-2 text-xs text-navy-700/50">
+          {page.record.subgrupo} · {page.record.classe}
         </p>
       </div>
       <Link

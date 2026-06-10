@@ -17,7 +17,7 @@ import { getAllTarifaPages } from "@/lib/tarifas/tarifasSeoData";
 export const metadata = buildPageMetadata({
   title: "Tarifas de Energia Elétrica no Brasil",
   description:
-    "Consulte tarifas de energia elétrica por concessionária, UF e região. Valores de TE, TUSD, ICMS e tarifa estimada final atualizados.",
+    "Consulte tarifas de energia elétrica por concessionária, UF e região. Valores de referência de TE, TUSD, ICMS e PIS/COFINS.",
   path: "/tarifas",
   keywords: [
     "tarifas de energia",
@@ -31,14 +31,6 @@ export const metadata = buildPageMetadata({
 export default function TarifasIndexPage() {
   const pages = getAllTarifaPages();
   const pageUrl = `${SITE_URL}/tarifas`;
-
-  const items = pages.map((p) => ({
-    slug: p.slug,
-    distribuidora: p.distribuidora,
-    uf: p.uf,
-    regiao: p.regiao,
-    tarifa: p.record.tarifa_estimada_final_rs_kwh,
-  }));
 
   const ufs = [...new Set(pages.map((p) => p.uf))].sort();
   const regioes = [...new Set(pages.map((p) => p.regiao))].sort();
@@ -73,12 +65,13 @@ export default function TarifasIndexPage() {
               Tarifas de Energia Elétrica no Brasil
             </h1>
             <p className="mt-4 max-w-3xl text-lg text-navy-700/70">
-              Consulte valores atualizados das concessionárias de energia elétrica.
-              Filtre por UF, região ou nome e compare tarifas estimadas.
+              Consulte valores de referência das concessionárias de energia
+              elétrica. Filtre por UF, região ou nome e veja os componentes
+              tarifários TE e TUSD.
             </p>
 
             <div className="mt-8">
-              <TarifasIndexClient items={items} ufs={ufs} regioes={regioes} />
+              <TarifasIndexClient pages={pages} ufs={ufs} regioes={regioes} />
             </div>
 
             <div className="mt-10">

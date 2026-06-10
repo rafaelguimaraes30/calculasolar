@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: PageProps) {
 
   return buildPageMetadata({
     title: `Tarifa da ${page.distribuidora} (${page.uf})`,
-    description: `Confira os valores atualizados da tarifa de energia elétrica da ${page.distribuidora} em ${page.uf}. TE, TUSD, ICMS e tarifa estimada final.`,
+    description: `Confira os componentes tarifários da ${page.distribuidora} em ${page.uf}. Valores de referência de TE, TUSD, ICMS e PIS/COFINS.`,
     path: `/tarifa/${slug}`,
     keywords: [
       "tarifa energia",
@@ -104,8 +104,8 @@ export default async function TarifaDetailPage({ params }: PageProps) {
                 {title}
               </h1>
               <p className="mt-4 text-lg text-navy-700/70">
-                Confira os valores atualizados da tarifa de energia elétrica da
-                concessionária.
+                Confira os componentes tarifários de referência da
+                concessionária: TE, TUSD, ICMS e PIS/COFINS.
               </p>
             </header>
 

@@ -25,9 +25,14 @@ export function MunicipioTarifaBlock({ uf, cidade }: MunicipioTarifaBlockProps) 
         <strong>{featured.distribuidora}</strong>
       </p>
       <p className="mt-1 text-sm text-navy-700/70">
-        Tarifa estimada:{" "}
+        Componentes tarifários de referência: TE{" "}
         <strong className="text-solar-600">
-          {formatTarifaRsKwh(featured.record.tarifa_estimada_final_rs_kwh)}
+          {formatTarifaRsKwh(featured.record.te_rs_kwh)}
+        </strong>
+        {" · "}
+        TUSD{" "}
+        <strong className="text-solar-600">
+          {formatTarifaRsKwh(featured.record.tusd_rs_kwh)}
         </strong>
       </p>
       <div className="mt-4 flex flex-wrap gap-3">
@@ -35,7 +40,7 @@ export function MunicipioTarifaBlock({ uf, cidade }: MunicipioTarifaBlockProps) 
           href={`/tarifa/${featured.slug}`}
           className="inline-flex rounded-full bg-gradient-to-r from-solar-500 to-solar-400 px-5 py-2 text-sm font-bold text-navy-900 transition-all hover:scale-105"
         >
-          Ver tarifa completa
+          Ver componentes tarifários
         </Link>
         <Link
           href={`/tarifas/${uf.toLowerCase()}`}

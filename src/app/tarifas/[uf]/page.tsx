@@ -14,7 +14,6 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 import { SITE_URL } from "@/lib/seo/site";
 import { parseUfSlug, toUfSlug } from "@/lib/tarifas/tarifasSlug";
 import {
-  formatTarifaRsKwh,
   getAllUfSlugs,
   getTarifaPagesByUf,
   getUfTarifaStats,
@@ -38,7 +37,7 @@ export async function generateMetadata({ params }: PageProps) {
   const label = getUfLabel(uf);
   return buildPageMetadata({
     title: `Tarifas de Energia em ${label}`,
-    description: `Confira tarifas de energia elétrica das concessionárias de ${label}. Compare valores, médias e tarifas estimadas por distribuidora.`,
+    description: `Confira os componentes tarifários das concessionárias de ${label}. Valores de referência de TE, TUSD, ICMS e PIS/COFINS.`,
     path: `/tarifas/${toUfSlug(uf)}`,
     keywords: ["tarifas energia", label, uf, "concessionárias"],
   });
@@ -91,27 +90,9 @@ export default async function TarifasUfPage({ params }: PageProps) {
               Tarifas de Energia em {label}
             </h1>
             <p className="mt-4 text-lg text-navy-700/70">
-              {stats.count} concessionária(s) cadastradas em {uf}.
+              {stats.count} concessionária(s) cadastradas em {uf}. Valores de
+              referência com componentes tarifários da base oficial.
             </p>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                ["Tarifa média", formatTarifaRsKwh(stats.media)],
-                ["Maior tarifa", formatTarifaRsKwh(stats.maior)],
-                ["Menor tarifa", formatTarifaRsKwh(stats.menor)],
-                ["Concessionárias", String(stats.count)],
-              ].map(([k, v]) => (
-                <div
-                  key={k}
-                  className="rounded-2xl border border-navy-800/10 bg-white p-4 shadow-sm"
-                >
-                  <p className="text-xs font-medium uppercase tracking-wider text-navy-700/50">
-                    {k}
-                  </p>
-                  <p className="mt-1 text-lg font-bold text-navy-900">{v}</p>
-                </div>
-              ))}
-            </div>
 
             <div className="mt-8">
               <TarifaListTable pages={pages} />

@@ -6,6 +6,21 @@ import tarifasJson from "@/lib/solar/data/tarifas_cursor_json/tarifas_cursor.jso
 import type { TarifaConcessionariaRecord } from "@/lib/solar/tarifasCursorData";
 import { toTarifaSlug, toUfSlug } from "./tarifasSlug";
 
+/** Dados exibidos nas páginas SEO — apenas componentes tarifários da base. */
+export type TarifaSeoRecord = Pick<
+  TarifaConcessionariaRecord,
+  | "distribuidora"
+  | "uf"
+  | "regiao"
+  | "subgrupo"
+  | "classe"
+  | "vigencia"
+  | "te_rs_kwh"
+  | "tusd_rs_kwh"
+  | "icms"
+  | "pis_cofins"
+>;
+
 export interface TarifaVariantRef {
   key: string;
   subgrupo: string;
@@ -19,25 +34,19 @@ export interface TarifaPageData {
   uf: string;
   regiao: string;
   sourceKey: string;
-  record: TarifaConcessionariaRecord;
+  record: TarifaSeoRecord;
   variants: TarifaVariantRef[];
 }
 
 export interface UfTarifaStats {
   uf: string;
   count: number;
-  media: number;
-  maior: number;
-  menor: number;
-  maiorDistribuidora: string;
-  menorDistribuidora: string;
 }
 
 export interface TarifaRankingData {
-  top10Maiores: TarifaPageData[];
-  top10Menores: TarifaPageData[];
-  mediaNacional: number;
-  mediaPorRegiao: { regiao: string; media: number; count: number }[];
+  total: number;
+  countPorRegiao: { regiao: string; count: number }[];
+  todasConcessionarias: TarifaPageData[];
 }
 
 const FEATURED_DISTRIBUIDORAS = [
@@ -53,9 +62,26 @@ const FEATURED_DISTRIBUIDORAS = [
 
 function isUsable(record: TarifaConcessionariaRecord): boolean {
   return (
-    Number.isFinite(record.tarifa_estimada_final_rs_kwh) &&
-    record.tarifa_estimada_final_rs_kwh > 0
+    Number.isFinite(record.te_rs_kwh) &&
+    record.te_rs_kwh > 0 &&
+    Number.isFinite(record.tusd_rs_kwh) &&
+    record.tusd_rs_kwh > 0
   );
+}
+
+function toSeoRecord(record: TarifaConcessionariaRecord): TarifaSeoRecord {
+  return {
+    distribuidora: record.distribuidora,
+    uf: record.uf,
+    regiao: record.regiao,
+    subgrupo: record.subgrupo,
+    classe: record.classe,
+    vigencia: record.vigencia,
+    te_rs_kwh: record.te_rs_kwh,
+    tusd_rs_kwh: record.tusd_rs_kwh,
+    icms: record.icms,
+    pis_cofins: record.pis_cofins,
+  };
 }
 
 function pickPrimaryRecord(
@@ -84,10 +110,8 @@ function parseRaw(key: string, raw: unknown): TarifaConcessionariaRecord | null 
     typeof r.vigencia !== "string" ||
     typeof r.te_rs_kwh !== "number" ||
     typeof r.tusd_rs_kwh !== "number" ||
-    typeof r.tarifa_base_rs_kwh !== "number" ||
     typeof r.icms !== "number" ||
-    typeof r.pis_cofins !== "number" ||
-    typeof r.tarifa_estimada_final_rs_kwh !== "number"
+    typeof r.pis_cofins !== "number"
   ) {
     return null;
   }
@@ -136,7 +160,7 @@ function buildTarifaPages(): TarifaPageData[] {
       uf: primary.uf,
       regiao: primary.regiao,
       sourceKey: bucket.keys[sourceKeyIndex >= 0 ? sourceKeyIndex : 0],
-      record: primary,
+      record: toSeoRecord(primary),
       variants,
     });
   }
@@ -197,55 +221,26 @@ export function getUfTarifaStats(uf: string): UfTarifaStats | null {
   const pages = getTarifaPagesByUf(uf);
   if (pages.length === 0) return null;
 
-  const valores = pages.map((p) => p.record.tarifa_estimada_final_rs_kwh);
-  const maior = Math.max(...valores);
-  const menor = Math.min(...valores);
-  const media = valores.reduce((a, b) => a + b, 0) / valores.length;
-  const maiorPage = pages.find((p) => p.record.tarifa_estimada_final_rs_kwh === maior)!;
-  const menorPage = pages.find((p) => p.record.tarifa_estimada_final_rs_kwh === menor)!;
-
   return {
     uf: uf.toUpperCase(),
     count: pages.length,
-    media,
-    maior,
-    menor,
-    maiorDistribuidora: maiorPage.distribuidora,
-    menorDistribuidora: menorPage.distribuidora,
   };
 }
 
 export function getTarifaRanking(): TarifaRankingData {
-  const sorted = [...TARIFA_PAGES].sort(
-    (a, b) =>
-      b.record.tarifa_estimada_final_rs_kwh -
-      a.record.tarifa_estimada_final_rs_kwh,
-  );
-
-  const valores = TARIFA_PAGES.map((p) => p.record.tarifa_estimada_final_rs_kwh);
-  const mediaNacional =
-    valores.reduce((a, b) => a + b, 0) / valores.length;
-
-  const regiaoMap = new Map<string, number[]>();
+  const regiaoMap = new Map<string, number>();
   for (const page of TARIFA_PAGES) {
-    const list = regiaoMap.get(page.regiao) ?? [];
-    list.push(page.record.tarifa_estimada_final_rs_kwh);
-    regiaoMap.set(page.regiao, list);
+    regiaoMap.set(page.regiao, (regiaoMap.get(page.regiao) ?? 0) + 1);
   }
 
-  const mediaPorRegiao = [...regiaoMap.entries()]
-    .map(([regiao, vals]) => ({
-      regiao,
-      media: vals.reduce((a, b) => a + b, 0) / vals.length,
-      count: vals.length,
-    }))
+  const countPorRegiao = [...regiaoMap.entries()]
+    .map(([regiao, count]) => ({ regiao, count }))
     .sort((a, b) => a.regiao.localeCompare(b.regiao, "pt-BR"));
 
   return {
-    top10Maiores: sorted.slice(0, 10),
-    top10Menores: [...sorted].reverse().slice(0, 10),
-    mediaNacional,
-    mediaPorRegiao,
+    total: TARIFA_PAGES.length,
+    countPorRegiao,
+    todasConcessionarias: TARIFA_PAGES,
   };
 }
 

@@ -12,21 +12,18 @@ import {
 } from "@/lib/seo/jsonLd";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { SITE_URL } from "@/lib/seo/site";
-import {
-  formatTarifaRsKwh,
-  getTarifaRanking,
-} from "@/lib/tarifas/tarifasSeoData";
+import { getTarifaRanking } from "@/lib/tarifas/tarifasSeoData";
 
 export const metadata = buildPageMetadata({
   title: "Ranking Nacional de Tarifas de Energia",
   description:
-    "Veja o ranking das maiores e menores tarifas de energia elétrica do Brasil, média nacional e média por região.",
+    "Consulte concessionárias de energia elétrica do Brasil por região. Valores de referência de TE, TUSD e componentes tarifários.",
   path: "/ranking-tarifas",
   keywords: [
     "ranking tarifas",
     "tarifa energia brasil",
-    "maiores tarifas",
-    "menores tarifas",
+    "concessionárias",
+    "TE TUSD",
   ],
 });
 
@@ -40,7 +37,7 @@ export default function RankingTarifasPage() {
         data={buildCollectionPageJsonLd({
           name: "Ranking Nacional de Tarifas de Energia",
           description:
-            "Ranking das maiores e menores tarifas de energia elétrica no Brasil.",
+            "Concessionárias de energia elétrica no Brasil por região.",
           url: pageUrl,
         })}
       />
@@ -70,17 +67,18 @@ export default function RankingTarifasPage() {
               Ranking Nacional de Tarifas de Energia
             </h1>
             <p className="mt-4 text-lg text-navy-700/70">
-              Compare as maiores e menores tarifas estimadas das concessionárias
-              brasileiras.
+              Concessionárias de energia elétrica no Brasil, organizadas por
+              região. Consulte os componentes tarifários de referência de cada
+              distribuidora.
             </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-navy-800/10 bg-white p-6 shadow-sm">
                 <p className="text-xs font-medium uppercase tracking-wider text-navy-700/50">
-                  Média nacional
+                  Total de concessionárias
                 </p>
                 <p className="mt-2 text-2xl font-bold text-solar-600">
-                  {formatTarifaRsKwh(ranking.mediaNacional)}
+                  {ranking.total}
                 </p>
               </div>
               <div className="rounded-2xl border border-dashed border-navy-800/20 bg-white p-6 text-sm text-navy-700/60">
@@ -94,17 +92,13 @@ export default function RankingTarifasPage() {
                 <thead className="bg-navy-800/3 text-xs uppercase tracking-wider text-navy-700/60">
                   <tr>
                     <th className="px-4 py-3">Região</th>
-                    <th className="px-4 py-3">Média</th>
                     <th className="px-4 py-3">Concessionárias</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {ranking.mediaPorRegiao.map((row) => (
+                  {ranking.countPorRegiao.map((row) => (
                     <tr key={row.regiao} className="border-t border-navy-800/5">
                       <td className="px-4 py-3 font-medium">{row.regiao}</td>
-                      <td className="px-4 py-3 text-solar-600">
-                        {formatTarifaRsKwh(row.media)}
-                      </td>
                       <td className="px-4 py-3">{row.count}</td>
                     </tr>
                   ))}
@@ -113,17 +107,10 @@ export default function RankingTarifasPage() {
             </div>
 
             <h2 className="mt-10 text-xl font-bold text-navy-900">
-              10 maiores tarifas do Brasil
+              Todas as concessionárias
             </h2>
             <div className="mt-4">
-              <TarifaListTable pages={ranking.top10Maiores} />
-            </div>
-
-            <h2 className="mt-10 text-xl font-bold text-navy-900">
-              10 menores tarifas do Brasil
-            </h2>
-            <div className="mt-4">
-              <TarifaListTable pages={ranking.top10Menores} />
+              <TarifaListTable pages={ranking.todasConcessionarias} />
             </div>
 
             <div className="mt-10">
