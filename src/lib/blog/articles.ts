@@ -54,6 +54,87 @@ const sistema5 = sistema5KwpSimulation();
 
 export const BLOG_ARTICLES: BlogArticle[] = [
   {
+    slug: "absolar-alerta-gargalos-sistema-eletrico-excesso-energia-solar",
+    title:
+      "Absolar alerta para gargalos no sistema elétrico após corte emergencial na geração solar",
+    description:
+      "Após o corte emergencial realizado pelo ONS, a Absolar afirma que o episódio evidencia a necessidade de modernização do sistema elétrico brasileiro. Entenda os impactos para a energia solar.",
+    keywords: [
+      "ABSOLAR",
+      "ONS",
+      "energia solar",
+      "gargalos sistema elétrico",
+      "geração distribuída",
+      "transição energética",
+      "excedente de energia",
+      "infraestrutura elétrica",
+      "armazenamento de energia",
+    ],
+    category: "noticias",
+    publishedAt: "2026-06-10",
+    sections: [
+      {
+        paragraphs: [
+          "Em 10 de junho de 2026, o Operador Nacional do Sistema Elétrico (ONS) precisou reduzir temporariamente parte da geração renovável conectada às redes de distribuição. O motivo foi um excesso momentâneo de oferta de energia em horários de baixa demanda, cenário que exigiu ações para preservar a estabilidade da rede elétrica nacional.",
+          "Na sequência do episódio, a Associação Brasileira de Energia Solar Fotovoltaica (ABSOLAR) publicou posicionamento afirmando que o caso evidencia gargalos estruturais do sistema elétrico brasileiro — e não um problema da tecnologia solar em si. Para quem acompanha o setor ou planeja instalar painéis, entender o contexto ajuda a separar fatos de alarmismo.",
+        ],
+      },
+      {
+        heading: "O que aconteceu?",
+        paragraphs: [
+          "O sistema elétrico precisa manter, a todo instante, um equilíbrio fino entre a energia produzida e a energia consumida. Quando a geração supera a demanda em determinado período, o operador do sistema precisa ajustar a produção para evitar oscilações de frequência que podem comprometer equipamentos e o fornecimento.",
+          "No episódio recente, houve excesso momentâneo de geração combinado com baixa demanda — situação comum em certos horários do dia, quando o consumo cai mas a produção solar e outras fontes renováveis continuam elevadas.",
+          "Inicialmente o ONS reduziu a geração das grandes usinas do Sistema Interligado Nacional. Como a medida não foi suficiente, foi acionado um plano emergencial aprovado pela ANEEL para limitar temporariamente parte da geração renovável conectada às distribuidoras.",
+          "A atuação teve caráter preventivo: o objetivo foi preservar a estabilidade operacional da rede, não punir consumidores ou produtores de energia solar. Para mais detalhes sobre a operação do ONS nesse contexto, confira nosso artigo sobre o [plano emergencial para excedente de energia](/blog/ons-plano-emergencial-excedente-energia).",
+        ],
+      },
+      {
+        heading: "Por que isso aconteceu?",
+        paragraphs: [
+          "O Brasil vive um crescimento acelerado da energia solar, especialmente na modalidade de geração distribuída — sistemas instalados em telhados de residências, comércios e propriedades rurais. Esse avanço é positivo para a matriz energética, mas coloca pressão sobre uma infraestrutura que foi dimensionada décadas atrás para um modelo centralizado de geração.",
+          "Ao mesmo tempo, outras fontes renováveis também expandiram sua participação. O resultado é que, em determinados momentos do dia, a oferta de energia pode superar o consumo imediato — especialmente quando a demanda industrial e residencial está reduzida.",
+          "Entre os fatores que contribuem para esse descompasso estão a falta de investimentos proporcionais em linhas de transmissão, a ausência de armazenamento de energia em larga escala (como baterias e hidrogênio) e a necessidade de modernizar a operação das redes de distribuição para lidar com geração descentralizada.",
+          "Em outras palavras: o problema não é a energia solar em si, mas a velocidade com que o país adotou fontes renováveis em comparação com a velocidade de adaptação da infraestrutura elétrica.",
+        ],
+      },
+      {
+        heading: "Isso é ruim para quem tem energia solar?",
+        paragraphs: [
+          "Para a grande maioria dos consumidores residenciais e comerciais com sistemas fotovoltaicos, a resposta prática é: não.",
+          "Os cortes emergenciais coordenados pelo ONS atingiram geradores conectados em escala que exigem coordenação centralizada. Consumidores com placas no telhado não tiveram seus equipamentos desligados remotamente nem perderam o direito de usar a energia que produzem.",
+          "O mecanismo de compensação de energia — que permite abater o consumo da rede com os créditos gerados pelo excedente solar — continua funcionando normalmente. Quem já instalou ou pretende instalar pode seguir contando com esse benefício regulatório.",
+          "O episódio reforça, sim, que o país precisa evoluir sua infraestrutura. Mas isso não diminui o potencial econômico da energia solar para residências e empresas. Para avaliar o retorno do investimento no seu caso, veja se [energia solar vale a pena em 2026](/blog/energia-solar-vale-a-pena-2026) e [quanto custa instalar um sistema residencial](/blog/quanto-custa-instalar-energia-solar-2026).",
+        ],
+      },
+      {
+        heading: "O que a ABSOLAR defende?",
+        paragraphs: [
+          "A ABSOLAR classificou o episódio como um sinal de alerta para a necessidade de modernização do setor elétrico brasileiro, e não como motivo para desacelerar a energia solar.",
+          "Entre as propostas defendidas pela entidade estão a expansão da capacidade de transmissão entre regiões, investimentos em tecnologias de armazenamento de energia, a modernização do marco regulatório para acomodar a geração distribuída e maior flexibilidade operacional nas redes de distribuição.",
+          "A associação também destaca a importância de fortalecer as redes elétricas locais para que consigam absorver volumes crescentes de geração descentralizada sem depender exclusivamente de cortes emergenciais.",
+          "O posicionamento converge com o que especialistas do setor vêm alertando há anos: a transição energética brasileira é irreversível, mas precisa caminhar junto com investimentos em infraestrutura, regulação e inovação tecnológica.",
+        ],
+      },
+      {
+        heading: "O que esperar para os próximos anos?",
+        paragraphs: [
+          "A tendência é que a geração distribuída continue crescendo. Custos de equipamentos seguem competitivos, a conscientização ambiental aumenta e a economia na conta de luz permanece como principal motivador para residências e pequenos negócios.",
+          "Para acomodar esse volume sem repetir episódios de excesso de oferta, o Brasil precisará acelerar investimentos em transmissão, armazenamento, redes inteligentes (Smart Grids) e novos modelos de gestão da demanda — como tarifas que incentivem o consumo em horários de maior geração solar.",
+          "Reguladores, operadores e distribuidoras já discutem mecanismos mais sofisticados de integração de fontes renováveis. A expectativa é que, nos próximos anos, o sistema ganhe mais ferramentas para equilibrar oferta e demanda sem intervenções emergenciais.",
+          "Para o consumidor, o cenário continua favorável: quem investe em energia solar hoje colhe economia imediata na fatura e participa de uma matriz energética em transformação. Entenda melhor [como a energia solar funciona e gera economia](/blog/como-funciona-energia-solar-economia-conta-luz) na prática.",
+        ],
+      },
+      {
+        heading: "Conclusão",
+        paragraphs: [
+          "Episódios como o corte emergencial do ONS fazem parte da transição energética brasileira — um processo que envolve crescimento acelerado de fontes limpas e a necessidade de adaptar uma infraestrutura histórica a um novo paradigma de geração descentralizada.",
+          "O alerta da ABSOLAR não deve ser lido como um sinal de que a energia solar perdeu atratividade. Pelo contrário: reforça que o país precisa investir na rede elétrica para sustentar o potencial que a tecnologia já demonstrou em escala.",
+          "Para quem considera instalar painéis, o momento continua sendo de oportunidade. Use o [simulador gratuito do CalculaSolar](/simulador) para estimar geração, economia e payback com dados da sua cidade, ou comece pela [página inicial](/) para conhecer todas as ferramentas disponíveis.",
+        ],
+      },
+    ],
+  },
+  {
     slug: "ons-plano-emergencial-excedente-energia",
     title:
       "ONS aciona plano emergencial inédito: entenda por que o Brasil precisou reduzir a geração de energia",
