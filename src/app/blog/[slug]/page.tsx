@@ -8,7 +8,6 @@ import {
   getBlogArticle,
   getAllBlogSlugs,
   getBlogCategoryLabel,
-  resolveArticleOgImage,
 } from "@/lib/blog/articles";
 import { renderBlogParagraph } from "@/lib/blog/format";
 import {
@@ -34,16 +33,13 @@ export async function generateMetadata({ params }: PageProps) {
   const article = getBlogArticle(slug);
   if (!article) return {};
 
-  const { url: ogImage, alt: ogImageAlt } = resolveArticleOgImage(article);
-
   return buildPageMetadata({
     title: article.title,
     description: article.description,
     path: `/blog/${slug}`,
     keywords: article.keywords,
     type: "article",
-    ogImage,
-    ogImageAlt,
+    socialImages: false,
   });
 }
 
@@ -98,18 +94,6 @@ export default async function BlogArticlePage({ params }: PageProps) {
                 {article.title}
               </h1>
               <p className="mt-4 text-lg text-navy-700/70">{article.description}</p>
-              {article.featuredImage && (
-                <figure className="mt-6 overflow-hidden rounded-2xl border border-navy-800/10">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={article.featuredImage}
-                    alt={article.featuredImageAlt ?? article.title}
-                    width={1200}
-                    height={630}
-                    className="aspect-[1200/630] w-full object-cover"
-                  />
-                </figure>
-              )}
             </header>
 
             <AdSlot position="inline-content" className="my-8 h-20 sm:h-24" />

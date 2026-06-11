@@ -14,9 +14,8 @@ export interface PageSeoInput {
   path: string;
   keywords?: string[];
   type?: "website" | "article";
-  /** URL absoluta da imagem social (Open Graph / Twitter) */
-  ogImage?: string;
-  ogImageAlt?: string;
+  /** Incluir imagens em Open Graph e Twitter (desativado nos artigos do blog) */
+  socialImages?: boolean;
 }
 
 export function buildPageMetadata(input: PageSeoInput): Metadata {
@@ -25,15 +24,14 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
     ? input.title
     : `${input.title} | ${SITE_NAME}`;
 
-  const ogImageUrl = input.ogImage ?? `${SITE_URL}${SITE_OG_IMAGE}`;
-  const ogImageAlt = input.ogImageAlt ?? SITE_OG_IMAGE_ALT;
+  const includeSocialImages = input.socialImages !== false;
 
   const ogImages = [
     {
-      url: ogImageUrl,
+      url: SITE_OG_IMAGE,
       width: 1200,
       height: 630,
-      alt: ogImageAlt,
+      alt: SITE_OG_IMAGE_ALT,
     },
   ];
 
@@ -54,13 +52,13 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
       siteName: SITE_NAME,
       locale: SITE_LOCALE,
       type: input.type ?? "website",
-      images: ogImages,
+      ...(includeSocialImages && { images: ogImages }),
     },
     twitter: {
-      card: "summary_large_image",
+      card: includeSocialImages ? "summary_large_image" : "summary",
       title,
       description: input.description,
-      images: [ogImageUrl],
+      ...(includeSocialImages && { images: [SITE_OG_IMAGE] }),
     },
     robots: { index: true, follow: true },
   };

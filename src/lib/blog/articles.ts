@@ -2,7 +2,6 @@ import { calculateMunicipioSolarPreview, formatMunicipioPreview } from "@/lib/so
 import { DEFAULT_MODULE_ID, getModuleById } from "@/lib/solar/modulesData";
 import { calculateSolarSimulation } from "@/lib/solar/calculate";
 import { formatInteger } from "@/lib/solar/format";
-import { SITE_OG_IMAGE, SITE_URL } from "@/lib/seo/site";
 
 export type BlogCategory = "guia" | "cidade" | "equipamento" | "noticias";
 
@@ -19,24 +18,10 @@ export interface BlogArticle {
   category: BlogCategory;
   /** ISO 8601 — usado para ordenação na listagem (mais recente primeiro) */
   publishedAt?: string;
-  /** Caminho em /public (ex.: /blog/imagem.jpg) — Open Graph, Twitter e JSON-LD */
-  featuredImage?: string;
-  featuredImageAlt?: string;
   /** Perguntas frequentes — renderizadas no artigo e no schema FAQPage */
   faq?: BlogFaqItem[];
   /** Conteúdo em parágrafos; suporta links markdown [texto](/url) */
   sections: { heading?: string; paragraphs: string[] }[];
-}
-
-/** Resolve URL e alt da imagem social do artigo (fallback: OG global do site). */
-export function resolveArticleOgImage(article: BlogArticle): {
-  url: string;
-  alt: string;
-} {
-  const imagePath = article.featuredImage ?? SITE_OG_IMAGE;
-  const url = imagePath.startsWith("http") ? imagePath : `${SITE_URL}${imagePath}`;
-  const alt = article.featuredImageAlt ?? article.title;
-  return { url, alt };
 }
 
 const CATEGORY_LABELS: Record<BlogCategory, string> = {
@@ -94,9 +79,6 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     ],
     category: "noticias",
     publishedAt: "2026-06-10",
-    featuredImage: "/blog/absolar-gargalos-sistema-eletrico.jpg",
-    featuredImageAlt:
-      "Linhas de transmissão e painéis solares representando os desafios da expansão da energia solar no Brasil.",
     faq: [
       {
         question: "O ONS desligou a energia solar residencial?",

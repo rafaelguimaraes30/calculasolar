@@ -1,5 +1,4 @@
 import type { BlogArticle } from "@/lib/blog/articles";
-import { resolveArticleOgImage } from "@/lib/blog/articles";
 import {
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -85,8 +84,6 @@ export function buildSimuladorFaqJsonLd() {
 }
 
 export function buildArticleJsonLd(article: BlogArticle, pageUrl: string) {
-  const { url: imageUrl } = resolveArticleOgImage(article);
-
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -97,7 +94,6 @@ export function buildArticleJsonLd(article: BlogArticle, pageUrl: string) {
       datePublished: article.publishedAt,
       dateModified: article.publishedAt,
     }),
-    image: imageUrl,
     author: { "@type": "Organization", name: SITE_NAME },
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
