@@ -11,7 +11,6 @@ const links = [
   { href: "#simulador", label: "Simulador" },
   { href: "#resultados", label: "Resultados" },
   { href: "/blog", label: "Blog" },
-  { href: "/tarifas", label: "Concessionárias" },
   { href: "/ultimas-noticias", label: "Notícias" },
 ];
 

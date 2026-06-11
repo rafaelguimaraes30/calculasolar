@@ -35,18 +35,6 @@ export function getStaticPageSitemapEntries(): SitemapUrlEntry[] {
       changefreq: "daily",
       priority: 0.9,
     },
-    {
-      loc: `${SITE_URL}/tarifas`,
-      lastmod: today,
-      changefreq: "weekly",
-      priority: 0.9,
-    },
-    {
-      loc: `${SITE_URL}/ranking-tarifas`,
-      lastmod: today,
-      changefreq: "weekly",
-      priority: 0.85,
-    },
   ];
 }
 

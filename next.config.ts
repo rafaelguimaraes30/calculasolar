@@ -8,6 +8,26 @@ const nextConfig: NextConfig = {
         destination: "/energia-solar-em/:slug",
         permanent: true,
       },
+      {
+        source: "/tarifas",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/tarifas/:uf",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/ranking-tarifas",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/tarifa/:slug",
+        destination: "/",
+        permanent: true,
+      },
     ];
   },
 };

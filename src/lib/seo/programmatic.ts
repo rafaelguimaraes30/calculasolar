@@ -8,7 +8,7 @@ import { SITE_URL } from "./site";
 export interface ProgrammaticSeoModule {
   /** Identificador interno do módulo */
   id: string;
-  /** Rota base (ex.: /tarifa-energia/[slug]) */
+  /** Rota base (ex.: /energia-solar-estado/[slug]) */
   basePath: string;
   enabled: boolean;
   sitemapPriority: number;
@@ -18,22 +18,6 @@ export interface ProgrammaticSeoModule {
 
 /** Módulos preparados para expansão sem refatoração do sitemap. */
 export const PROGRAMMATIC_SEO_MODULES: ProgrammaticSeoModule[] = [
-  {
-    id: "concessionarias",
-    basePath: "/energia-solar-concessionaria",
-    enabled: false,
-    sitemapPriority: 0.8,
-    sitemapChangefreq: "monthly",
-    getSlugs: () => [],
-  },
-  {
-    id: "tarifas-variantes",
-    basePath: "/tarifa",
-    enabled: false,
-    sitemapPriority: 0.75,
-    sitemapChangefreq: "monthly",
-    getSlugs: () => [],
-  },
   {
     id: "estados",
     basePath: "/energia-solar-estado",
