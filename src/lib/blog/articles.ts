@@ -2,8 +2,14 @@ import { calculateMunicipioSolarPreview, formatMunicipioPreview } from "@/lib/so
 import { DEFAULT_MODULE_ID, getModuleById } from "@/lib/solar/modulesData";
 import { calculateSolarSimulation } from "@/lib/solar/calculate";
 import { formatInteger } from "@/lib/solar/format";
+import { SITE_OG_IMAGE, SITE_URL } from "@/lib/seo/site";
 
 export type BlogCategory = "guia" | "cidade" | "equipamento" | "noticias";
+
+export interface BlogFaqItem {
+  question: string;
+  answer: string;
+}
 
 export interface BlogArticle {
   slug: string;
@@ -13,8 +19,24 @@ export interface BlogArticle {
   category: BlogCategory;
   /** ISO 8601 — usado para ordenação na listagem (mais recente primeiro) */
   publishedAt?: string;
+  /** Caminho em /public (ex.: /blog/imagem.jpg) — Open Graph, Twitter e JSON-LD */
+  featuredImage?: string;
+  featuredImageAlt?: string;
+  /** Perguntas frequentes — renderizadas no artigo e no schema FAQPage */
+  faq?: BlogFaqItem[];
   /** Conteúdo em parágrafos; suporta links markdown [texto](/url) */
   sections: { heading?: string; paragraphs: string[] }[];
+}
+
+/** Resolve URL e alt da imagem social do artigo (fallback: OG global do site). */
+export function resolveArticleOgImage(article: BlogArticle): {
+  url: string;
+  alt: string;
+} {
+  const imagePath = article.featuredImage ?? SITE_OG_IMAGE;
+  const url = imagePath.startsWith("http") ? imagePath : `${SITE_URL}${imagePath}`;
+  const alt = article.featuredImageAlt ?? article.title;
+  return { url, alt };
 }
 
 const CATEGORY_LABELS: Record<BlogCategory, string> = {
@@ -72,6 +94,26 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     ],
     category: "noticias",
     publishedAt: "2026-06-10",
+    featuredImage: "/blog/absolar-gargalos-sistema-eletrico.jpg",
+    featuredImageAlt:
+      "Linhas de transmissão e painéis solares representando os desafios da expansão da energia solar no Brasil.",
+    faq: [
+      {
+        question: "O ONS desligou a energia solar residencial?",
+        answer:
+          "Não. O corte emergencial atingiu parte da geração coordenada pelo sistema elétrico nacional e não desligou automaticamente sistemas fotovoltaicos residenciais.",
+      },
+      {
+        question: "Quem possui energia solar perdeu créditos?",
+        answer:
+          "Não. O sistema de compensação de energia continua funcionando normalmente para consumidores enquadrados na geração distribuída.",
+      },
+      {
+        question: "Vale a pena instalar energia solar após esse episódio?",
+        answer:
+          "Sim. O episódio evidencia desafios da infraestrutura elétrica brasileira, mas não reduz o potencial econômico da energia solar para residências, empresas e propriedades rurais.",
+      },
+    ],
     sections: [
       {
         paragraphs: [
@@ -130,6 +172,16 @@ export const BLOG_ARTICLES: BlogArticle[] = [
           "Episódios como o corte emergencial do ONS fazem parte da transição energética brasileira — um processo que envolve crescimento acelerado de fontes limpas e a necessidade de adaptar uma infraestrutura histórica a um novo paradigma de geração descentralizada.",
           "O alerta da ABSOLAR não deve ser lido como um sinal de que a energia solar perdeu atratividade. Pelo contrário: reforça que o país precisa investir na rede elétrica para sustentar o potencial que a tecnologia já demonstrou em escala.",
           "Para quem considera instalar painéis, o momento continua sendo de oportunidade. Use o [simulador gratuito do CalculaSolar](/simulador) para estimar geração, economia e payback com dados da sua cidade, ou comece pela [página inicial](/) para conhecer todas as ferramentas disponíveis.",
+        ],
+      },
+      {
+        heading: "Fontes",
+        paragraphs: [
+          "Este conteúdo foi elaborado com base em informações públicas divulgadas por órgãos e entidades do setor elétrico brasileiro.",
+          "Fontes consultadas:",
+          "[Operador Nacional do Sistema Elétrico (ONS)](https://www.ons.org.br/)",
+          "[Agência Nacional de Energia Elétrica (ANEEL)](https://www.gov.br/aneel/)",
+          "[Associação Brasileira de Energia Solar Fotovoltaica (ABSOLAR)](https://www.absolar.org.br/)",
         ],
       },
     ],

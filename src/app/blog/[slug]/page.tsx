@@ -4,11 +4,17 @@ import { Navbar } from "@/components/home/Navbar";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { RelatedArticles } from "@/components/blog/RelatedArticles";
-import { getBlogArticle, getAllBlogSlugs, getBlogCategoryLabel } from "@/lib/blog/articles";
+import {
+  getBlogArticle,
+  getAllBlogSlugs,
+  getBlogCategoryLabel,
+  resolveArticleOgImage,
+} from "@/lib/blog/articles";
 import { renderBlogParagraph } from "@/lib/blog/format";
 import {
   buildArticleJsonLd,
   buildBreadcrumbJsonLd,
+  buildFaqPageJsonLd,
 } from "@/lib/seo/jsonLd";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { SITE_URL } from "@/lib/seo/site";
@@ -28,12 +34,16 @@ export async function generateMetadata({ params }: PageProps) {
   const article = getBlogArticle(slug);
   if (!article) return {};
 
+  const { url: ogImage, alt: ogImageAlt } = resolveArticleOgImage(article);
+
   return buildPageMetadata({
     title: article.title,
     description: article.description,
     path: `/blog/${slug}`,
     keywords: article.keywords,
     type: "article",
+    ogImage,
+    ogImageAlt,
   });
 }
 
@@ -50,11 +60,21 @@ export default async function BlogArticlePage({ params }: PageProps) {
     { name: "Blog", item: `${SITE_URL}/blog` },
     { name: article.title, item: pageUrl },
   ]);
+  const faqLd =
+    article.faq && article.faq.length > 0
+      ? buildFaqPageJsonLd(
+          article.faq.map((item) => ({
+            question: item.question,
+            answer: item.answer,
+          })),
+        )
+      : null;
 
   return (
     <>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbLd} />
+      {faqLd && <JsonLd data={faqLd} />}
       <Navbar />
       <main className="bg-background">
         <AdSlot position="top-banner" className="mx-auto mt-4 max-w-7xl px-4 h-20 sm:h-24" />
@@ -78,6 +98,18 @@ export default async function BlogArticlePage({ params }: PageProps) {
                 {article.title}
               </h1>
               <p className="mt-4 text-lg text-navy-700/70">{article.description}</p>
+              {article.featuredImage && (
+                <figure className="mt-6 overflow-hidden rounded-2xl border border-navy-800/10">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={article.featuredImage}
+                    alt={article.featuredImageAlt ?? article.title}
+                    width={1200}
+                    height={630}
+                    className="aspect-[1200/630] w-full object-cover"
+                  />
+                </figure>
+              )}
             </header>
 
             <AdSlot position="inline-content" className="my-8 h-20 sm:h-24" />
@@ -96,6 +128,23 @@ export default async function BlogArticlePage({ params }: PageProps) {
                 </section>
               ))}
             </div>
+
+            {article.faq && article.faq.length > 0 && (
+              <section className="mt-10 space-y-6">
+                <h2 className="text-xl font-bold text-navy-900">Perguntas Frequentes</h2>
+                {article.faq.map((item) => (
+                  <div
+                    key={item.question}
+                    className="rounded-xl border border-navy-800/10 bg-white p-4"
+                  >
+                    <h3 className="font-semibold text-navy-900">{item.question}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-navy-700/70">
+                      {item.answer}
+                    </p>
+                  </div>
+                ))}
+              </section>
+            )}
 
             <RelatedArticles slug={slug} />
 

@@ -14,6 +14,9 @@ export interface PageSeoInput {
   path: string;
   keywords?: string[];
   type?: "website" | "article";
+  /** URL absoluta da imagem social (Open Graph / Twitter) */
+  ogImage?: string;
+  ogImageAlt?: string;
 }
 
 export function buildPageMetadata(input: PageSeoInput): Metadata {
@@ -22,12 +25,15 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
     ? input.title
     : `${input.title} | ${SITE_NAME}`;
 
+  const ogImageUrl = input.ogImage ?? `${SITE_URL}${SITE_OG_IMAGE}`;
+  const ogImageAlt = input.ogImageAlt ?? SITE_OG_IMAGE_ALT;
+
   const ogImages = [
     {
-      url: SITE_OG_IMAGE,
+      url: ogImageUrl,
       width: 1200,
       height: 630,
-      alt: SITE_OG_IMAGE_ALT,
+      alt: ogImageAlt,
     },
   ];
 
@@ -54,7 +60,7 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
       card: "summary_large_image",
       title,
       description: input.description,
-      images: [SITE_OG_IMAGE],
+      images: [ogImageUrl],
     },
     robots: { index: true, follow: true },
   };
