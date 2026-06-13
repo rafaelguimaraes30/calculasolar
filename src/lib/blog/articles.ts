@@ -18,6 +18,8 @@ export interface BlogArticle {
   category: BlogCategory;
   /** ISO 8601 — usado para ordenação na listagem (mais recente primeiro) */
   publishedAt?: string;
+  /** Bullets exibidos em box de resumo após a introdução */
+  summary?: string[];
   /** Perguntas frequentes — renderizadas no artigo e no schema FAQPage */
   faq?: BlogFaqItem[];
   /** Conteúdo em parágrafos; suporta links markdown [texto](/url) */
@@ -80,10 +82,37 @@ export const BLOG_ARTICLES: BlogArticle[] = [
     ],
     category: "noticias",
     publishedAt: "2026-06-12",
+    summary: [
+      "O armazenamento por baterias pode reduzir desperdícios de energia solar.",
+      "A tecnologia ajuda a equilibrar oferta e demanda no sistema elétrico.",
+      "Especialistas apontam que baterias serão fundamentais para a expansão da geração distribuída.",
+      "O Brasil já iniciou projetos regulatórios para integração dessa tecnologia.",
+    ],
+    faq: [
+      {
+        question: "As baterias podem evitar novos cortes na geração solar?",
+        answer:
+          "Elas ajudam significativamente a reduzir excedentes de geração, armazenando energia para utilização em horários de maior demanda. Entretanto, também são necessários investimentos em transmissão e modernização das redes elétricas.",
+      },
+      {
+        question: "Vale a pena instalar baterias residenciais hoje?",
+        answer:
+          "Para a maioria das residências brasileiras, as baterias ainda possuem custo elevado. Porém, a tendência é de redução gradual dos preços nos próximos anos.",
+      },
+      {
+        question: "A energia solar continuará crescendo no Brasil?",
+        answer:
+          "Sim. O Brasil possui excelente potencial solar e continua ampliando sua capacidade instalada, devendo permanecer entre os principais mercados mundiais de energia fotovoltaica.",
+      },
+    ],
     sections: [
       {
         paragraphs: [
           "Após os recentes episódios de gerenciamento emergencial da geração renovável pelo Operador Nacional do Sistema Elétrico (ONS), o debate sobre armazenamento de energia ganhou ainda mais importância no setor elétrico brasileiro.",
+        ],
+      },
+      {
+        paragraphs: [
           "Especialistas apontam que o uso de baterias em larga escala pode representar uma das principais soluções para equilibrar oferta e demanda, armazenando energia produzida durante os horários de maior geração solar para utilização em momentos de maior consumo.",
           "A própria ANEEL vem avançando na regulamentação dessa tecnologia e autorizou projetos que integram sistemas de armazenamento a usinas fotovoltaicas, reforçando a tendência de modernização da matriz elétrica nacional. Para entender o contexto recente, leia também sobre o [plano emergencial do ONS](/blog/ons-plano-emergencial-excedente-energia) e o [posicionamento da ABSOLAR sobre gargalos no sistema](/blog/absolar-alerta-gargalos-sistema-eletrico-excesso-energia-solar).",
         ],
@@ -93,7 +122,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
         paragraphs: [
           "A geração solar apresenta uma característica natural: concentra grande parte da produção durante o meio do dia.",
           "Em períodos de baixa demanda, principalmente finais de semana e feriados, pode ocorrer excesso de geração em determinadas regiões, exigindo ações operacionais do sistema elétrico para manter a estabilidade da rede.",
-          "Com baterias, essa energia excedente pode ser armazenada e utilizada posteriormente, reduzindo desperdícios e diminuindo a necessidade de cortes temporários de geração.",
+          "Com baterias, essa energia excedente pode ser armazenada e utilizada posteriormente, reduzindo desperdícios e diminuindo a necessidade de cortes temporários de geração. Quem planeja um sistema pode aprender a [calcular quantas placas solares](/blog/como-calcular-quantos-paineis-solares) são necessárias antes de avaliar o armazenamento.",
         ],
       },
       {
@@ -101,7 +130,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
         paragraphs: [
           "Entre as principais vantagens do armazenamento de energia estão a maior estabilidade do sistema elétrico, o melhor aproveitamento da geração solar, a redução do acionamento de usinas térmicas e o aumento da flexibilidade operacional das distribuidoras.",
           "A tecnologia também abre caminho para a integração de volumes ainda maiores de fontes renováveis sem sobrecarregar a infraestrutura existente.",
-          "A expectativa do mercado é que, com a redução dos custos das baterias e a evolução regulatória, essa solução se torne cada vez mais comum nos próximos anos.",
+          "A expectativa do mercado é que, com a redução dos custos das baterias e a evolução regulatória, essa solução se torne cada vez mais comum nos próximos anos — assim como ocorreu com os painéis fotovoltaicos, cujo investimento pode ser avaliado em [quanto custa instalar energia solar em 2026](/blog/quanto-custa-instalar-energia-solar-2026).",
         ],
       },
       {
@@ -110,7 +139,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
           "Para consumidores residenciais e comerciais, o cenário continua favorável.",
           "O crescimento do armazenamento tende a fortalecer a expansão da [energia solar no Brasil](/blog/energia-solar-vale-a-pena-2026) e aumentar a capacidade do sistema elétrico de absorver novos geradores distribuídos.",
           "Embora as baterias ainda representem um investimento elevado para muitos consumidores, especialistas acreditam que a popularização da tecnologia deverá reduzir custos e ampliar sua adoção ao longo da próxima década.",
-          "Quem já possui ou planeja instalar painéis pode entender melhor o funcionamento do sistema em [como a energia solar funciona e gera economia](/blog/como-funciona-energia-solar-economia-conta-luz).",
+          "Quem já possui ou planeja instalar painéis pode entender melhor a [economia de energia residencial](/blog/como-funciona-energia-solar-economia-conta-luz) e como os créditos de compensação funcionam na prática.",
         ],
       },
       {
@@ -119,7 +148,14 @@ export const BLOG_ARTICLES: BlogArticle[] = [
           "O Brasil possui uma das maiores disponibilidades de irradiação solar do mundo e continua ampliando sua capacidade instalada ano após ano.",
           "O avanço do armazenamento de energia deverá ser um dos pilares para sustentar esse crescimento, permitindo que a transição energética ocorra com mais segurança e eficiência operacional.",
           "Mais do que uma solução tecnológica, as baterias tendem a se tornar um componente estratégico para a expansão sustentável das energias renováveis no país.",
-          "Quer estimar o potencial solar da sua região? Use o [simulador gratuito do CalculaSolar](/simulador) ou comece pela [página inicial](/) para dimensionar geração, economia e payback com dados reais da sua cidade.",
+        ],
+      },
+      {
+        heading: "Conclusão",
+        paragraphs: [
+          "O avanço do armazenamento por baterias representa um dos próximos grandes passos da transição energética brasileira. Ao permitir melhor aproveitamento da geração solar e aumentar a flexibilidade operacional do sistema elétrico, essa tecnologia tende a acelerar ainda mais a expansão da energia fotovoltaica no país.",
+          "Embora ainda existam desafios regulatórios e econômicos, especialistas apontam que baterias, redes inteligentes e novas tecnologias de armazenamento serão fundamentais para garantir um sistema elétrico mais eficiente, sustentável e preparado para o crescimento contínuo das fontes renováveis.",
+          "Para descobrir quanto você pode economizar com energia solar utilizando dados reais da sua cidade, utilize gratuitamente o [simulador do CalculaSolar](/simulador) ou comece pela [página inicial](/).",
         ],
       },
     ],

@@ -84,18 +84,37 @@ export function buildSimuladorFaqJsonLd() {
 }
 
 export function buildArticleJsonLd(article: BlogArticle, pageUrl: string) {
+  const imageUrl = `${SITE_URL}${SITE_OG_IMAGE}`;
+
   return {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: article.title,
     description: article.description,
     url: pageUrl,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": pageUrl,
+    },
     ...(article.publishedAt && {
       datePublished: article.publishedAt,
       dateModified: article.publishedAt,
     }),
-    author: { "@type": "Organization", name: SITE_NAME },
-    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    image: imageUrl,
+    author: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: imageUrl,
+      },
+    },
   };
 }
 

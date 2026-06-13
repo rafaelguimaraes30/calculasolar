@@ -100,22 +100,45 @@ export default async function BlogArticlePage({ params }: PageProps) {
 
             <div className="prose prose-navy max-w-none space-y-8">
               {article.sections.map((section, i) => (
-                <section key={i}>
-                  {section.heading && (
-                    <h2 className="text-xl font-bold text-navy-900">{section.heading}</h2>
+                <div key={i}>
+                  <section>
+                    {section.heading && (
+                      <h2 className="text-xl font-bold text-navy-900">{section.heading}</h2>
+                    )}
+                    {section.paragraphs.map((p, j) => (
+                      <p key={j} className="mt-3 text-base leading-relaxed text-navy-700/80">
+                        {renderBlogParagraph(p)}
+                      </p>
+                    ))}
+                  </section>
+
+                  {i === 0 && article.summary && article.summary.length > 0 && (
+                    <aside className="mt-6 rounded-2xl border border-solar-500/25 bg-solar-500/8 p-6">
+                      <h2 className="text-sm font-bold uppercase tracking-wider text-navy-900">
+                        Resumo
+                      </h2>
+                      <ul className="mt-4 space-y-2">
+                        {article.summary.map((item) => (
+                          <li
+                            key={item}
+                            className="flex gap-2 text-sm leading-relaxed text-navy-700/85"
+                          >
+                            <span className="mt-0.5 shrink-0 text-solar-600" aria-hidden>
+                              •
+                            </span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </aside>
                   )}
-                  {section.paragraphs.map((p, j) => (
-                    <p key={j} className="mt-3 text-base leading-relaxed text-navy-700/80">
-                      {renderBlogParagraph(p)}
-                    </p>
-                  ))}
-                </section>
+                </div>
               ))}
             </div>
 
             {article.faq && article.faq.length > 0 && (
               <section className="mt-10 space-y-6">
-                <h2 className="text-xl font-bold text-navy-900">Perguntas Frequentes</h2>
+                <h2 className="text-xl font-bold text-navy-900">Perguntas frequentes</h2>
                 {article.faq.map((item) => (
                   <div
                     key={item.question}
