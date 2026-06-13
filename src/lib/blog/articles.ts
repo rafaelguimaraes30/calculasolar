@@ -3,7 +3,7 @@ import { DEFAULT_MODULE_ID, getModuleById } from "@/lib/solar/modulesData";
 import { calculateSolarSimulation } from "@/lib/solar/calculate";
 import { formatInteger } from "@/lib/solar/format";
 
-export type BlogCategory = "guia" | "cidade" | "equipamento" | "noticias";
+export type BlogCategory = "guia" | "cidade" | "equipamento" | "noticias" | "economia";
 
 export interface BlogFaqItem {
   question: string;
@@ -31,6 +31,7 @@ const CATEGORY_LABELS: Record<BlogCategory, string> = {
   cidade: "cidade",
   equipamento: "equipamento",
   noticias: "Notícias do Setor",
+  economia: "Economia de Energia",
 };
 
 export function getBlogCategoryLabel(category: BlogCategory): string {
@@ -63,6 +64,105 @@ const painel550 = painel550Simulation();
 const sistema5 = sistema5KwpSimulation();
 
 export const BLOG_ARTICLES: BlogArticle[] = [
+  {
+    slug: "bandeira-tarifaria-como-funciona-conta-de-luz-2026",
+    title:
+      "Bandeira tarifária: como funciona e quanto ela pode aumentar sua conta de luz em 2026",
+    description:
+      "Entenda como funcionam as bandeiras tarifárias da ANEEL, quando elas são acionadas e como a energia solar pode reduzir o impacto desses aumentos na conta de luz.",
+    keywords: [
+      "bandeira tarifária",
+      "bandeira verde",
+      "bandeira amarela",
+      "bandeira vermelha",
+      "ANEEL",
+      "conta de luz",
+      "tarifa de energia",
+      "energia solar",
+      "economia de energia",
+      "custo energia elétrica",
+    ],
+    category: "economia",
+    publishedAt: "2026-06-13",
+    sections: [
+      {
+        paragraphs: [
+          "As bandeiras tarifárias são um mecanismo criado para indicar o custo de geração de energia elétrica no Brasil. Dependendo das condições do sistema elétrico, elas podem aumentar ou manter o valor da conta de luz dos consumidores.",
+          "Entender como funciona esse sistema é importante para quem deseja economizar energia e avaliar alternativas como a [geração própria por meio da energia solar](/blog/como-funciona-energia-solar-economia-conta-luz). Para acompanhar o contexto do setor elétrico, confira também as [últimas notícias](/ultimas-noticias) sobre energia e tarifas.",
+        ],
+      },
+      {
+        heading: "O que são as bandeiras tarifárias?",
+        paragraphs: [
+          "As bandeiras tarifárias foram criadas pela Agência Nacional de Energia Elétrica (ANEEL) para informar aos consumidores o custo real da geração de energia elétrica no país.",
+          "Quando há necessidade de utilizar usinas mais caras, principalmente termelétricas, um valor adicional é cobrado na conta de luz.",
+          "Já quando as condições são favoráveis, não existe cobrança extra.",
+          "O sistema busca dar mais transparência aos custos do setor elétrico e incentivar o consumo consciente.",
+        ],
+      },
+      {
+        heading: "Bandeira Verde",
+        paragraphs: [
+          "Na bandeira verde não existe cobrança adicional.",
+          "Ela indica que as condições de geração são favoráveis e que a matriz elétrica consegue atender à demanda com menor custo.",
+        ],
+      },
+      {
+        heading: "Bandeira Amarela",
+        paragraphs: [
+          "A bandeira amarela representa um aumento moderado no custo de geração.",
+          "Nesse caso, ocorre uma cobrança adicional proporcional ao consumo mensal de energia elétrica.",
+        ],
+      },
+      {
+        heading: "Bandeira Vermelha Patamar 1",
+        paragraphs: [
+          "Quando o sistema elétrico exige maior utilização de usinas térmicas, pode ser acionada a bandeira vermelha patamar 1, elevando ainda mais o custo da energia.",
+        ],
+      },
+      {
+        heading: "Bandeira Vermelha Patamar 2",
+        paragraphs: [
+          "É o nível mais elevado do sistema de bandeiras tarifárias.",
+          "Ela indica condições mais críticas de geração e resulta no maior acréscimo na conta de luz.",
+        ],
+      },
+      {
+        heading: "Por que as bandeiras mudam?",
+        paragraphs: [
+          "As alterações dependem principalmente das condições do sistema elétrico brasileiro.",
+          "Entre os principais fatores estão o nível dos reservatórios das hidrelétricas, o regime de chuvas, a necessidade de acionamento de termelétricas, o crescimento do consumo nacional e o equilíbrio entre oferta e demanda de energia.",
+          "Eventos climáticos extremos podem influenciar diretamente essas mudanças.",
+        ],
+      },
+      {
+        heading: "Como a energia solar reduz o impacto das bandeiras?",
+        paragraphs: [
+          "Quem produz parte da própria energia por meio de painéis solares reduz significativamente a quantidade de energia comprada da distribuidora.",
+          "Com isso, o impacto financeiro das bandeiras tarifárias tende a ser muito menor.",
+          "Quanto maior a geração própria, menor costuma ser o valor final pago na conta de luz.",
+          "Essa é uma das razões pelas quais a [energia solar continua crescendo no Brasil](/blog/energia-solar-vale-a-pena-2026). Entenda em detalhes [como a energia solar funciona e gera economia](/blog/como-funciona-energia-solar-economia-conta-luz) na prática.",
+        ],
+      },
+      {
+        heading: "Vale a pena investir em energia solar por causa das bandeiras?",
+        paragraphs: [
+          "Embora as bandeiras tarifárias sejam temporárias, o histórico brasileiro mostra que períodos de custos elevados podem durar vários meses.",
+          "Por isso, muitos consumidores enxergam a energia solar como uma forma de reduzir a exposição aos aumentos tarifários e obter maior previsibilidade nos gastos com eletricidade.",
+          "Além da economia mensal, um sistema fotovoltaico pode gerar retorno financeiro ao longo dos anos e reduzir significativamente o impacto de reajustes futuros.",
+          "Para avaliar o investimento no seu caso, veja se [energia solar vale a pena em 2026](/blog/energia-solar-vale-a-pena-2026) e [quanto custa instalar energia solar](/blog/quanto-custa-instalar-energia-solar-2026) na sua região.",
+        ],
+      },
+      {
+        heading: "Conclusão",
+        paragraphs: [
+          "As bandeiras tarifárias são um importante mecanismo do setor elétrico brasileiro e influenciam diretamente o valor pago pelos consumidores na conta de energia.",
+          "Compreender seu funcionamento ajuda no planejamento financeiro e mostra por que a geração própria de energia vem ganhando cada vez mais espaço no país.",
+          "Se você deseja descobrir quanto poderia economizar instalando energia solar, utilize gratuitamente o [simulador do CalculaSolar](/simulador) e obtenha uma estimativa personalizada de geração, economia anual e tempo de retorno do investimento utilizando dados reais da sua cidade. Você também pode começar pela [página inicial](/).",
+        ],
+      },
+    ],
+  },
   {
     slug: "armazenamento-de-energia-baterias-solar-brasil-2026",
     title:
