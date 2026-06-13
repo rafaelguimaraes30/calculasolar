@@ -8,6 +8,7 @@ import {
   getTarifaOptionsCountByUf,
   resolveTarifaParaSimulacao,
   searchTarifaConcessionariaOptions,
+  type TarifaConcessionariaOption,
 } from "@/lib/solar/tarifasCursorData";
 import type { TarifaModo } from "@/types/solar";
 import { Receipt, Search } from "lucide-react";
@@ -37,14 +38,13 @@ export function TariffSelector({
   onManualChange,
   errors,
 }: TariffSelectorProps) {
+  const MAX_SUGGESTIONS = 10;
   const listId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState(
-    searchTarifaConcessionariaOptions("", estado, 20),
-  );
+  const [suggestions, setSuggestions] = useState<TarifaConcessionariaOption[]>([]);
 
   const totalTarifas = getTarifaOptionsCountByUf(estado);
 
@@ -80,7 +80,14 @@ export function TariffSelector({
 
   const refreshSuggestions = useCallback(
     (query: string) => {
-      const results = searchTarifaConcessionariaOptions(query, estado, 20);
+      const trimmed = query.trim();
+      if (trimmed.length === 0) {
+        setSuggestions([]);
+        setOpen(false);
+        return;
+      }
+
+      const results = searchTarifaConcessionariaOptions(query, estado, MAX_SUGGESTIONS);
       setSuggestions(results);
       setHighlightIndex(0);
       setOpen(true);
@@ -88,15 +95,28 @@ export function TariffSelector({
     [estado],
   );
 
-  const inputValue = open
-    ? searchQuery
-    : (selectedOption?.label ?? searchQuery);
+  const trimmedQuery = searchQuery.trim();
+  const showDropdown = open && trimmedQuery.length > 0;
+
+  const inputValue =
+    searchQuery.trim().length > 0
+      ? searchQuery
+      : (selectedOption?.label ?? searchQuery);
+
+  const [prevEstado, setPrevEstado] = useState(estado);
+  if (estado !== prevEstado) {
+    setPrevEstado(estado);
+    setSearchQuery("");
+    setSuggestions([]);
+    setOpen(false);
+  }
 
   useEffect(() => {
-    if (tarifaModo !== "concessionaria") return;
+    if (tarifaModo !== "concessionaria" || trimmedQuery.length === 0) return;
+
     const timer = setTimeout(() => refreshSuggestions(searchQuery), 150);
     return () => clearTimeout(timer);
-  }, [searchQuery, estado, tarifaModo, refreshSuggestions]);
+  }, [searchQuery, trimmedQuery, estado, tarifaModo, refreshSuggestions]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -115,7 +135,12 @@ export function TariffSelector({
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (!open || suggestions.length === 0) return;
+    if (e.key === "Escape") {
+      setOpen(false);
+      return;
+    }
+
+    if (!showDropdown || suggestions.length === 0) return;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -123,12 +148,10 @@ export function TariffSelector({
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setHighlightIndex((i) => (i - 1 + suggestions.length) % suggestions.length);
-    } else if (e.key === "Enter" && open) {
+    } else if (e.key === "Enter" && showDropdown) {
       e.preventDefault();
       const picked = suggestions[highlightIndex];
       if (picked) selectOption(picked.key, picked.label);
-    } else if (e.key === "Escape") {
-      setOpen(false);
     }
   }
 
@@ -176,26 +199,23 @@ export function TariffSelector({
                   type="text"
                   autoComplete="off"
                   role="combobox"
-                  aria-expanded={open}
+                  aria-expanded={showDropdown}
                   aria-controls={listId}
                   aria-autocomplete="list"
                   placeholder="Buscar concessionária (ex.: CPFL, CEMIG, ENEL...)"
                   value={inputValue}
                   onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    if (!e.target.value.trim()) {
+                    const value = e.target.value;
+                    setSearchQuery(value);
+                    if (!value.trim()) {
                       onConcessionariaChange("");
+                      setSuggestions([]);
+                      setOpen(false);
                     }
-                    setOpen(true);
                   }}
-                  onFocus={() => {
-                    if (!open) {
-                      setSearchQuery("");
-                      refreshSuggestions("");
-                    } else {
-                      refreshSuggestions(searchQuery);
-                    }
-                    setOpen(true);
+                  onFocus={(e) => {
+                    setOpen(false);
+                    e.target.select();
                   }}
                   onKeyDown={handleKeyDown}
                   aria-invalid={!!errors?.tarifaConcessionariaKey}
@@ -206,13 +226,13 @@ export function TariffSelector({
                 </span>
               </div>
 
-              {open && suggestions.length === 0 && (
+              {showDropdown && suggestions.length === 0 && (
                 <div className="absolute z-20 mt-1 w-full rounded-xl border border-navy-800/10 bg-white px-4 py-3 text-sm text-navy-700/60 shadow-xl shadow-navy-900/10 animate-fade-in">
-                  Nenhuma concessionária disponível para esta região
+                  Nenhuma concessionária encontrada.
                 </div>
               )}
 
-              {open && suggestions.length > 0 && (
+              {showDropdown && suggestions.length > 0 && (
                 <ul
                   id={listId}
                   role="listbox"
