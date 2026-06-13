@@ -3,6 +3,7 @@
 import { fieldClassName, FormField } from "@/components/ui/FormField";
 import {
   getTarifaByKey,
+  getTarifaEfetivaKwh,
   getTarifaOptionByKey,
   getTarifaOptionsCountByUf,
   resolveTarifaParaSimulacao,
@@ -237,7 +238,7 @@ export function TariffSelector({
                         <span className="text-xs text-navy-700/60">
                           {opt.record.subgrupo} · {opt.record.classe} · {opt.record.uf} ·{" "}
                           R${" "}
-                          {opt.record.tarifa_estimada_final_rs_kwh.toLocaleString("pt-BR", {
+                          {getTarifaEfetivaKwh(opt.record, opt.record.uf).toLocaleString("pt-BR", {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })}
@@ -292,11 +293,11 @@ export function TariffSelector({
             </div>
             <div className="sm:col-span-2">
               <p className="text-[10px] font-medium uppercase tracking-wider text-navy-700/50">
-                Tarifa estimada final
+                Tarifa efetiva
               </p>
               <p className="text-lg font-bold text-navy-900">
                 R${" "}
-                {selectedRecord.tarifa_estimada_final_rs_kwh.toLocaleString(
+                {getTarifaEfetivaKwh(selectedRecord, selectedRecord.uf).toLocaleString(
                   "pt-BR",
                   { minimumFractionDigits: 2, maximumFractionDigits: 2 },
                 )}

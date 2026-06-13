@@ -6,6 +6,13 @@
 import tarifasJson from "./data/tarifas_cursor_json/tarifas_cursor.json";
 import { lookupTariff, type TariffLookupResult } from "./tariffData";
 
+/** Teto para tarifa residencial convencional B1 (R$/kWh) */
+const TARIFA_MAX_RESIDENCIAL_KWH = 1.18;
+/** Piso plausível — abaixo disso usa média da UF */
+const TARIFA_MIN_PLAUSIVEL_KWH = 0.55;
+/** Teto para tarifas rurais/comerciais selecionadas explicitamente */
+const TARIFA_MAX_OUTRAS_CLASSES_KWH = 1.35;
+
 export interface TarifaConcessionariaRecord {
   distribuidora: string;
   uf: string;
@@ -75,11 +82,49 @@ for (const [key, raw] of Object.entries(
   if (record) tarifasRaw[key] = record;
 }
 
+function isResidencialB1(record: TarifaConcessionariaRecord): boolean {
+  return record.subgrupo === "B1" && record.classe === "Residencial";
+}
+
+function isClasseRural(record: TarifaConcessionariaRecord): boolean {
+  return (
+    record.subgrupo === "B2" ||
+    record.classe.toLowerCase().includes("rural")
+  );
+}
+
+/**
+ * Tarifa efetiva paga pelo consumidor — valor único com TE+TUSD e tributos,
+ * sem duplicar componentes. Aplica limites de plausibilidade para evitar
+ * superestimativas (ex.: rural CEMIG acima de R$ 1,70/kWh).
+ */
+export function getTarifaEfetivaKwh(
+  record: TarifaConcessionariaRecord,
+  uf: string,
+): number {
+  let tarifa = record.tarifa_estimada_final_rs_kwh;
+
+  if (isResidencialB1(record)) {
+    tarifa = Math.min(tarifa, TARIFA_MAX_RESIDENCIAL_KWH);
+  } else if (isClasseRural(record)) {
+    tarifa = Math.min(tarifa, TARIFA_MAX_OUTRAS_CLASSES_KWH);
+  } else {
+    tarifa = Math.min(tarifa, TARIFA_MAX_RESIDENCIAL_KWH);
+  }
+
+  if (tarifa < TARIFA_MIN_PLAUSIVEL_KWH) {
+    return lookupTariff(uf).tarifaKwh;
+  }
+
+  return tarifa;
+}
+
 function isTarifaRecordUsable(record: TarifaConcessionariaRecord): boolean {
   return (
-    typeof record.tarifa_estimada_final_rs_kwh === "number" &&
     Number.isFinite(record.tarifa_estimada_final_rs_kwh) &&
-    record.tarifa_estimada_final_rs_kwh > 0
+    record.tarifa_estimada_final_rs_kwh > 0 &&
+    Number.isFinite(record.tarifa_base_rs_kwh) &&
+    record.tarifa_base_rs_kwh > 0
   );
 }
 
@@ -96,7 +141,7 @@ function formatTarifaOptionLabel(
   key: string,
   record: TarifaConcessionariaRecord,
 ): string {
-  const tarifa = record.tarifa_estimada_final_rs_kwh.toLocaleString("pt-BR", {
+  const tarifa = getTarifaEfetivaKwh(record, record.uf).toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
@@ -152,6 +197,8 @@ function scoreTarifaSearch(
   if (subgrupo.includes(queryNormalized)) score += 15;
 
   if (preferredUf && option.record.uf === preferredUf) score += 12;
+  if (isResidencialB1(option.record)) score += 45;
+  if (isClasseRural(option.record)) score -= 35;
 
   return score;
 }
@@ -238,7 +285,7 @@ export function resolveTarifaParaSimulacao(input: {
   if (key) {
     const record = getTarifaByKey(key);
     if (record && isTarifaRecordUsable(record) && record.uf === uf) {
-      const tarifa = record.tarifa_estimada_final_rs_kwh;
+      const tarifa = getTarifaEfetivaKwh(record, uf);
       return {
         tarifaKwh: tarifa,
         fonte: "concessionaria",

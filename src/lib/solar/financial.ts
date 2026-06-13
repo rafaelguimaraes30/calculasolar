@@ -3,6 +3,8 @@ import {
   type TarifaFonte,
   type TarifaConcessionariaRecord,
 } from "./tarifasCursorData";
+import type { TipoLigacaoEletrica } from "@/types/solar";
+import { getCustoDisponibilidadeKwh } from "./disponibilidade";
 import type { TariffLookupResult } from "./tariffData";
 
 /** Reajuste médio anual da tarifa de energia (mercado brasileiro) */
@@ -30,6 +32,7 @@ export interface FinancialCalculationInput {
   geracaoMensalKwh: number;
   consumoMensalKwh: number;
   estado: string;
+  tipoLigacao?: TipoLigacaoEletrica;
   tarifaModo?: "concessionaria" | "manual";
   tarifaConcessionariaKey?: string;
   tarifaManualKwh?: number;
@@ -51,6 +54,8 @@ export interface FinancialCalculationResult {
   reajusteTarifarioAnual: number;
   economia25AnosReais: number;
   kwhCompensadosMes: number;
+  kwhFaturadosMes: number;
+  custoDisponibilidadeKwh: number;
 }
 
 export interface FinancialDataProvider {
@@ -80,16 +85,36 @@ export function calculateInvestmentTotal(
   };
 }
 
-/** Economia limitada ao consumo compensável na fatura */
+/** Economia considerando compensação e custo mínimo de disponibilidade (ANEEL) */
 export function calculateMonthlySavings(
   geracaoMensalKwh: number,
   consumoMensalKwh: number,
   tarifaKwh: number,
-): { economiaMensalReais: number; kwhCompensadosMes: number } {
-  const kwhCompensadosMes = Math.min(geracaoMensalKwh, consumoMensalKwh);
+  tipoLigacao: TipoLigacaoEletrica = "monofasica",
+): {
+  economiaMensalReais: number;
+  kwhCompensadosMes: number;
+  kwhFaturadosMes: number;
+  custoDisponibilidadeKwh: number;
+} {
+  const custoDisponibilidadeKwh = getCustoDisponibilidadeKwh(tipoLigacao);
+  const contaSemSolar = consumoMensalKwh * tarifaKwh;
+  const consumoLiquido = consumoMensalKwh - geracaoMensalKwh;
+
+  const kwhFaturadosMes =
+    consumoLiquido <= 0
+      ? custoDisponibilidadeKwh
+      : Math.max(consumoLiquido, custoDisponibilidadeKwh);
+
+  const contaComSolar = kwhFaturadosMes * tarifaKwh;
+  const economiaMensalReais = Math.max(0, contaSemSolar - contaComSolar);
+  const kwhCompensadosMes = Math.max(0, consumoMensalKwh - kwhFaturadosMes);
+
   return {
+    economiaMensalReais,
     kwhCompensadosMes,
-    economiaMensalReais: kwhCompensadosMes * tarifaKwh,
+    kwhFaturadosMes,
+    custoDisponibilidadeKwh,
   };
 }
 
@@ -152,6 +177,7 @@ class LocalFinancialProvider implements FinancialDataProvider {
       geracaoMensalKwh,
       consumoMensalKwh,
       estado,
+      tipoLigacao = "monofasica",
       tarifaModo = "concessionaria",
       tarifaConcessionariaKey,
       tarifaManualKwh,
@@ -169,11 +195,13 @@ class LocalFinancialProvider implements FinancialDataProvider {
     const tarifaLookup = tarifaResolvida.lookup;
     const tarifaKwh = tarifaResolvida.tarifaKwh;
 
-    const { economiaMensalReais, kwhCompensadosMes } = calculateMonthlySavings(
-      geracaoMensalKwh,
-      consumoMensalKwh,
-      tarifaKwh,
-    );
+    const { economiaMensalReais, kwhCompensadosMes, kwhFaturadosMes, custoDisponibilidadeKwh } =
+      calculateMonthlySavings(
+        geracaoMensalKwh,
+        consumoMensalKwh,
+        tarifaKwh,
+        tipoLigacao,
+      );
 
     const economiaAnualReais = economiaMensalReais * 12;
 
@@ -208,6 +236,8 @@ class LocalFinancialProvider implements FinancialDataProvider {
       reajusteTarifarioAnual: REAJUSTE_TARIFARIO_ANUAL,
       economia25AnosReais,
       kwhCompensadosMes,
+      kwhFaturadosMes,
+      custoDisponibilidadeKwh,
     };
   }
 }

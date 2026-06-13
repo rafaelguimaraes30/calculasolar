@@ -41,6 +41,7 @@ function painel550Simulation() {
     cidade: "Goiânia",
     estado: "GO",
     consumoMensalKwh: 220,
+    tipoLigacao: "monofasica",
     tipoImovel: "residencial",
     orientacaoTelhado: "norte",
     moduloId: modulo.id,

@@ -29,10 +29,14 @@ export type RoofTiltChoice =
 
 export type TarifaModo = "concessionaria" | "manual";
 
+/** Tipo de ligação elétrica — define o custo mínimo de disponibilidade (ANEEL) */
+export type TipoLigacaoEletrica = "monofasica" | "bifasica" | "trifasica";
+
 export interface SimulationInput {
   cidade: string;
   estado: string;
   consumoMensalKwh: number;
+  tipoLigacao: TipoLigacaoEletrica;
   tipoImovel: PropertyType;
   orientacaoTelhado: RoofOrientation;
   moduloId: string;
@@ -85,6 +89,7 @@ export interface SimulationFormData {
   cidade: string;
   estado: string;
   consumo: string;
+  tipoLigacao: TipoLigacaoEletrica;
   tipo: PropertyType;
   orientacao: RoofOrientation;
   moduloId: string;

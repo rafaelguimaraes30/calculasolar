@@ -3,6 +3,8 @@
 import { fieldClassName, FormField } from "@/components/ui/FormField";
 import type { UseSolarSimulatorReturn } from "@/hooks/useSolarSimulator";
 import { ESTADOS_BR } from "@/lib/solar/constants";
+import { TIPO_LIGACAO_LABELS } from "@/lib/solar/disponibilidade";
+import type { TipoLigacaoEletrica } from "@/types/solar";
 import { Building2, Home, Loader2, Zap } from "lucide-react";
 import { CityAutocomplete } from "./CityAutocomplete";
 import { CityPreviewBadge } from "./CityPreviewBadge";
@@ -152,6 +154,33 @@ export function Simulator({ simulator }: SimulatorProps) {
                       aria-invalid={!!errors.consumo}
                       className={fieldClassName(!!errors.consumo)}
                     />
+                  </FormField>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <FormField
+                    id="tipo-ligacao"
+                    label="Tipo de ligação elétrica"
+                    error={errors.tipoLigacao}
+                    hint="Informação disponível na sua fatura de energia"
+                  >
+                    <select
+                      id="tipo-ligacao"
+                      value={form.tipoLigacao}
+                      onChange={(e) =>
+                        updateField("tipoLigacao", e.target.value as TipoLigacaoEletrica)
+                      }
+                      aria-invalid={!!errors.tipoLigacao}
+                      className={`${fieldClassName(!!errors.tipoLigacao)} appearance-none`}
+                    >
+                      {(Object.entries(TIPO_LIGACAO_LABELS) as [TipoLigacaoEletrica, string][]).map(
+                        ([value, label]) => (
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
+                        ),
+                      )}
+                    </select>
                   </FormField>
                 </div>
 

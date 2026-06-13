@@ -32,6 +32,7 @@ const defaultForm: SimulationFormData = {
   cidade: "",
   estado: "SP",
   consumo: "",
+  tipoLigacao: "monofasica",
   tipo: "residencial",
   orientacao: "norte",
   inclinacao: "nao_sei",
@@ -54,6 +55,7 @@ function buildSimulationInput(form: SimulationFormData): SimulationInput | null 
     cidade: form.cidade.trim(),
     estado: form.estado,
     consumoMensalKwh: consumo,
+    tipoLigacao: form.tipoLigacao,
     tipoImovel: form.tipo as PropertyType,
     orientacaoTelhado: form.orientacao,
     moduloId: form.moduloId,
@@ -104,6 +106,7 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
     return JSON.stringify({
       orientacao: formData.orientacao,
       inclinacao: formData.inclinacao,
+      tipoLigacao: formData.tipoLigacao,
       tarifaModo: formData.tarifaModo,
       tarifaConcessionariaKey: formData.tarifaConcessionariaKey,
       tarifaManual: formData.tarifaManual,
@@ -151,6 +154,7 @@ export function useSolarSimulator(initial?: SolarSimulatorInitialValues) {
         if (
           field === "orientacao" ||
           field === "inclinacao" ||
+          field === "tipoLigacao" ||
           field === "tarifaModo" ||
           field === "tarifaConcessionariaKey" ||
           field === "tarifaManual" ||

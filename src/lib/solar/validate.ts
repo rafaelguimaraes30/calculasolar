@@ -1,5 +1,6 @@
-import type { SimulationFormData, SimulationFormErrors } from "@/types/solar";
+import type { SimulationFormData, SimulationFormErrors, TipoLigacaoEletrica } from "@/types/solar";
 import { CONSUMO_MAX_KWH, CONSUMO_MIN_KWH, ESTADOS_BR } from "./constants";
+import { TIPO_LIGACAO_LABELS } from "./disponibilidade";
 import { getModuleById } from "./modulesData";
 import { isValidRoofTiltChoice } from "./inclinacao";
 import { isValidOrientacao } from "./orientation";
@@ -10,6 +11,7 @@ const FORM_FIELD_ORDER: (keyof SimulationFormData)[] = [
   "tarifaConcessionariaKey",
   "tarifaManual",
   "consumo",
+  "tipoLigacao",
   "orientacao",
   "inclinacao",
   "moduloId",
@@ -22,6 +24,7 @@ const FIELD_ELEMENT_IDS: Partial<Record<keyof SimulationFormData, string>> = {
   tarifaConcessionariaKey: "tarifa-concessionaria",
   tarifaManual: "tarifa-manual",
   consumo: "consumo",
+  tipoLigacao: "tipo-ligacao",
   orientacao: "orientacao",
   inclinacao: "inclinacao",
   moduloId: "moduloId",
@@ -65,6 +68,13 @@ export function validateSimulationForm(
     } else if (consumo > CONSUMO_MAX_KWH) {
       errors.consumo = `Consumo máximo: ${CONSUMO_MAX_KWH.toLocaleString("pt-BR")} kWh/mês.`;
     }
+  }
+
+  const tiposLigacao = Object.keys(TIPO_LIGACAO_LABELS) as TipoLigacaoEletrica[];
+  if (!data.tipoLigacao) {
+    errors.tipoLigacao = "Selecione o tipo de ligação elétrica.";
+  } else if (!tiposLigacao.includes(data.tipoLigacao)) {
+    errors.tipoLigacao = "Tipo de ligação inválido.";
   }
 
   if (!data.tipo) {

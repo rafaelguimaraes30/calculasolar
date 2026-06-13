@@ -96,6 +96,7 @@ export function calculateSolarSimulation(
     geracaoMensalKwh,
     consumoMensalKwh,
     estado,
+    tipoLigacao: input.tipoLigacao ?? "monofasica",
     tarifaModo: input.tarifaModo,
     tarifaConcessionariaKey: input.tarifaConcessionariaKey,
     tarifaManualKwh: input.tarifaManualKwh,
