@@ -167,40 +167,39 @@ function normalizeUf(estado?: string): string | undefined {
   return uf || undefined;
 }
 
-function scoreTarifaSearch(
-  option: TarifaConcessionariaOption,
-  queryNormalized: string,
-  preferredUf?: string,
+function normalizeSearchText(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .trim();
+}
+
+function splitSearchWords(normalized: string): string[] {
+  return normalized.split(/[\s\-–—/]+/).filter(Boolean);
+}
+
+/**
+ * Pontua correspondência textual na distribuidora.
+ * Prioridade: prefixo do nome > palavra exata > palavra com prefixo > contains.
+ */
+function scoreDistribuidoraSearch(
+  distribuidora: string,
+  query: string,
 ): number {
-  if (!queryNormalized) {
-    return preferredUf && option.record.uf === preferredUf ? 10 : 1;
-  }
+  const q = normalizeSearchText(query);
+  if (!q) return 0;
 
-  const distribuidora = option.record.distribuidora.toLowerCase();
-  const uf = option.record.uf.toLowerCase();
-  const regiao = option.record.regiao.toLowerCase();
-  const classe = option.record.classe.toLowerCase();
-  const subgrupo = option.record.subgrupo.toLowerCase();
-  const key = option.key.toLowerCase();
+  const name = normalizeSearchText(distribuidora);
+  const words = splitSearchWords(name);
 
-  let score = 0;
-  if (distribuidora === queryNormalized) score += 120;
-  else if (distribuidora.startsWith(queryNormalized)) score += 90;
-  else if (distribuidora.includes(queryNormalized)) score += 70;
+  if (name.startsWith(q)) return 400;
+  if (words.some((word) => word === q)) return 300;
+  if (words.some((word) => word.startsWith(q))) return 250;
+  if (name.includes(q)) return 100;
+  if (words.some((word) => word.includes(q))) return 50;
 
-  if (uf === queryNormalized) score += 60;
-  else if (uf.startsWith(queryNormalized)) score += 40;
-
-  if (key.includes(queryNormalized)) score += 35;
-  if (regiao.includes(queryNormalized)) score += 25;
-  if (classe.includes(queryNormalized)) score += 20;
-  if (subgrupo.includes(queryNormalized)) score += 15;
-
-  if (preferredUf && option.record.uf === preferredUf) score += 12;
-  if (isResidencialB1(option.record)) score += 45;
-  if (isClasseRural(option.record)) score -= 35;
-
-  return score;
+  return 0;
 }
 
 /**
@@ -209,27 +208,27 @@ function scoreTarifaSearch(
 export function searchTarifaConcessionariaOptions(
   query: string,
   estado?: string,
-  limit = 20,
+  limit = 10,
 ): TarifaConcessionariaOption[] {
-  const q = query.trim().toLowerCase();
+  const q = normalizeSearchText(query);
   const uf = normalizeUf(estado);
-  if (!uf) return [];
+  if (!uf || !q) return [];
 
   const pool = tarifaOptions.filter((option) => option.record.uf === uf);
-
-  if (!q) {
-    return pool;
-  }
 
   return pool
     .map((option) => ({
       option,
-      score: scoreTarifaSearch(option, q, uf),
+      score: scoreDistribuidoraSearch(option.record.distribuidora, q),
     }))
     .filter((x) => x.score > 0)
     .sort(
       (a, b) =>
         b.score - a.score ||
+        normalizeSearchText(a.option.record.distribuidora).localeCompare(
+          normalizeSearchText(b.option.record.distribuidora),
+          "pt-BR",
+        ) ||
         a.option.label.localeCompare(b.option.label, "pt-BR"),
     )
     .slice(0, limit)
